@@ -1,0 +1,6 @@
+Java, Spring Boot, Vue.js, MySQL/PostgreSQL
+jSoup
+- scrapowanie danych ze stron internetowych do serwera (np. agregacja artykułów prasowych lub pobieranie danych o notowaniach walut/akcji/kryptowalut)
+- udostępnienie zawartości jako API
+- scrapowanie na żądanie i przesyłanie od razu do klienta lub w odstępach czasowych i zapisywanie do bazy danych
+- front-end jako demonstracja stworzonego API (np. wizualizacja danych w formie wykresów oraz tabeli wzrostów i spadków)
