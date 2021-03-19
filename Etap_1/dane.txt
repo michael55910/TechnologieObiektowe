@@ -1,6 +1,18 @@
+Pytlasiński Michał, michael55910@gmail.com, 1ID21B
+Sleiman Samer, samx355@gmail.com, 1ID21B
+
+45. Inny temat
+
 Java, Spring Boot, Vue.js, MySQL/PostgreSQL
 jSoup
+
 - scrapowanie danych ze stron internetowych do serwera (np. agregacja artykułów prasowych lub pobieranie danych o notowaniach walut/akcji/kryptowalut)
 - udostępnienie zawartości jako API
 - scrapowanie na żądanie i przesyłanie od razu do klienta lub w odstępach czasowych i zapisywanie do bazy danych
 - front-end jako demonstracja stworzonego API (np. wizualizacja danych w formie wykresów oraz tabeli wzrostów i spadków)
+
+
+temat projektu z przedmiotu "Programowanie systemów rozproszonych": Komparator
+tematy prac inżynierskich:
+- Michał Pytlasiński - "Internetowa porównywarka cen"
+- Samer Sleiman - "System informatyczny do generowania recept"
