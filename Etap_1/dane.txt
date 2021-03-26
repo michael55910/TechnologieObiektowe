@@ -1,18 +1,39 @@
 Pytlasiński Michał, michael55910@gmail.com, 1ID21B
 Sleiman Samer, samx355@gmail.com, 1ID21B
 
-45. Inny temat
-
-Java, Spring Boot, Vue.js, MySQL/PostgreSQL
-jSoup
-
-- scrapowanie danych ze stron internetowych do serwera (np. agregacja artykułów prasowych lub pobieranie danych o notowaniach walut/akcji/kryptowalut)
-- udostępnienie zawartości jako API
-- scrapowanie na żądanie i przesyłanie od razu do klienta lub w odstępach czasowych i zapisywanie do bazy danych
-- front-end jako demonstracja stworzonego API (np. wizualizacja danych w formie wykresów oraz tabeli wzrostów i spadków)
+45. Inny temat: Przetwarzanie i wizualizacja danych na temat kursów kryptowalut, pobieranych z wykorzystaniem zewnętrznego API oraz przewidywanie zmian tych kursów
 
 
-temat projektu z przedmiotu "Programowanie systemów rozproszonych": Komparator
-tematy prac inżynierskich:
+Technologie:
+- Java, Spring Boot
+- Vue.js
+- mongoDB (lub inna baza NoSQL)
+
+Planowane funkcjonalności:
+
+- Pobieranie danych na temat kursów kryptowalut za pomocą bezpłatnego API Coinpaprika lub CoinGecko (oba pozwalają na dostęp różnież do historycznych danych oraz dużą liczbę zapytań w bezpłatnym planie)
+- Przechowywanie historycznych danych o kursach w bazie danych (co najmniej dwie tabele: dane stałe i dane zmienne w czasie)
+- Przewidywanie przyszłych zmian kursów za pomocą biblioteki wykorzystującej uczenie maszynowe (wykorzystanie części historycznych danych jako dane uczące, a części jako testowe); rozważane biblioteki: JSAT (analiza statystyczna), DL4J (sieci neuronowe, deep learning). Oczekiwany rezultat to wskazanie nadchodzącego wzrostu lub spadku oraz procent pewności tego wskazania. Wynik powinien być proponowany dla kilku predefiniowanych czasów trwania inwestycji.
+- Prezentacja aktualnych kursów w formie wykresów
+- Możliwość porównania kilku kursów na jednym wykresie
+Funkcje rozszerzone:
+- Weryfikacja skuteczności przewidywań poprzez automatyczne inwestowanie za pomocą (testowego) API giełdy, np. Binance API: https://testnet.binancefuture.com
+- Analiza (lub graficzne porównanie) wpływu wybranych czynników zewnętrznych na kurs kryptowaluty (np. kursów walut narodowych - API: https://www.exchangerate-api.com/ )
+
+
+Harmonogram:
+
+09.04 - Pobieranie i przechowywanie danych z zewnętrznego API
+30.04 - Przygotowanie systemu do przewidywania kursu
+14.05 - Komunikacja pomiędzy serwerem a klientem
+28.05 - Podstawowa funkcjonalność front-endu (wyświetlanie kursów i przewidywań)
+04.06 - Porównywanie kursów
+11.06 - Automatyczne inwestowanie
+18.06 - Możliwość obserwacji wpływu czynników zewnętrznych
+
+
+Temat projektu z przedmiotu "Programowanie systemów rozproszonych": Komparator
+
+Tematy prac inżynierskich:
 - Michał Pytlasiński - "Internetowa porównywarka cen"
 - Samer Sleiman - "System informatyczny do generowania recept"
