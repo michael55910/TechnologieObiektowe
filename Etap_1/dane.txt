@@ -5,7 +5,7 @@ Sleiman Samer, samx355@gmail.com, 1ID21B
 
 
 Technologie:
-- Python, Django
+- Python, Django, Django Rest Framework
 - Vue.js
 - PostgreSQL
 
@@ -13,7 +13,7 @@ Planowane funkcjonalności:
 
 - Pobieranie danych na temat kursów kryptowalut za pomocą bezpłatnego API Coinpaprika, które  pozwala na dostęp do historycznych danych oraz dużą liczbę zapytań w bezpłatnym planie
 - Przechowywanie historycznych danych o kursach w bazie danych (co najmniej dwie tabele: dane stałe i dane zmienne w czasie)
-- Przewidywanie przyszłych zmian kursów za pomocą biblioteki wykorzystującej uczenie maszynowe (wykorzystanie części historycznych danych jako dane uczące, a części jako testowe); rozważane biblioteki: JSAT (analiza statystyczna), DL4J (sieci neuronowe, deep learning). Oczekiwany rezultat to wskazanie nadchodzącego wzrostu lub spadku oraz procent pewności tego wskazania. Wynik powinien być proponowany dla kilku predefiniowanych czasów trwania inwestycji.
+- Przewidywanie przyszłych zmian kursów za pomocą biblioteki przeznaczonej do analizy danych, Pandas
 - Prezentacja aktualnych kursów w formie wykresów
 - Możliwość porównania kilku kursów na jednym wykresie
 Funkcje rozszerzone:
