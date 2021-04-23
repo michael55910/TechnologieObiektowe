@@ -37,3 +37,23 @@ Temat projektu z przedmiotu "Programowanie systemów rozproszonych": Komparator
 Tematy prac inżynierskich:
 - Michał Pytlasiński - "Internetowa porównywarka cen"
 - Samer Sleiman - "System informatyczny do generowania recept"
+
+
+Podział pracy:
+
+Samer Sleiman:
+
+zaprogramowanie modeli obiektów oraz implementacja metod wykorzystywanych w projekcie
+konfiguracja i operacje na bazie danych
+utworzenie interfejsu REST API
+
+Michał Pytlasiński:
+
+konfiguracja API zewnętrznych dostawców
+zaprogramowanie interfejsu graficznego użytkownika
+połączenie warstwy logicznej z prezentacyjną z wykorzystaniem interfejsu REST API
+
+Wspólne zadania:
+
+analiza zgromadzonych danych dotyczących poszczególnych kryptowalut
+zaprogramowanie sieci neuronowych wykorzystywanych w procesie uczenia maszynowego
