@@ -8,8 +8,11 @@ CoinpaprikaClient = Coinpaprika.Client()
 
 available_coins = CoinpaprikaClient.coins()
 
+exchange_rates = BinanceClient.get_ticker()
 
-# print(available_coins)
+candles = BinanceClient.get_historical_klines("BNBBTC", Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+
+print(candles)
 
 
 class Cryptocurrency(models.Model):
@@ -35,7 +38,7 @@ class Cryptocurrency(models.Model):
 
 
 class Rate(models.Model):
-    symbol = models.CharField(max_length=8, blank=False)
+    symbol = models.CharField(max_length=20, blank=False)
     price_change = models.FloatField(blank=False)
     price_change_percent = models.FloatField(blank=False)
     weighted_avg_price = models.FloatField(blank=False)
@@ -49,8 +52,8 @@ class Rate(models.Model):
     low_price = models.FloatField(blank=False)
     volume = models.FloatField(blank=False)
     quote_volume = models.FloatField(blank=False)
-    open_time = models.IntegerField(blank=False)
-    close_time = models.IntegerField(blank=False)
+    open_time = models.BigIntegerField(blank=False)
+    close_time = models.BigIntegerField(blank=False)
     first_id = models.IntegerField(blank=False)
     last_id = models.IntegerField(blank=False)
     count = models.IntegerField(blank=False)
@@ -85,3 +88,31 @@ for x in available_coins:
     coins_list.append(new_coin)
 
 # Cryptocurrency.objects.bulk_create(coins_list)
+
+exchange_list = []
+
+for x in exchange_rates:
+    new_rate = Rate(symbol=x['symbol'], price_change=x['priceChange'],
+                    price_change_percent=x['priceChangePercent'], weighted_avg_price=x['weightedAvgPrice'],
+                    prev_close_price=x['prevClosePrice'], last_price=x['lastPrice'], last_qty=x['lastQty'],
+                    bid_price=x['bidPrice'],
+                    ask_price=x['askPrice'], open_price=x['openPrice'], high_price=x['highPrice'],
+                    low_price=x['lowPrice'], volume=x['volume'],
+                    quote_volume=x['quoteVolume'], open_time=x['openTime'], close_time=x['closeTime'],
+                    first_id=x['firstId'], last_id=x['lastId'],
+                    count=x['count'])
+    exchange_list.append(new_rate)
+
+# Rate.objects.bulk_create(exchange_list)
+
+candle_list = []
+
+for x in candles:
+    new_candle = Candle(open_time=x[0], open=x[1], high=x[2], low=x[3],
+                        close=x[4], volume=x[5], close_time=x[6],
+                        quote_asset_volume=x[7], number_of_trades=x[8],
+                        taker_buy_base_asset_volume=x[9], taker_buy_quote_asset_volume=x[10],
+                        ignore=x[11])
+    candle_list.append(new_candle)
+
+# Candle.objects.bulk_create(candle_list)
