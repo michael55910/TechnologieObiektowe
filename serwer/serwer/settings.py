@@ -81,8 +81,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'cryptoanalyzer',
         'USER': 'postgres',
-        'PASSWORD': 'pA4g8u4dy53rhSG',
-        'HOST': 'cryptoanalyzer.cojze30cduke.us-east-2.rds.amazonaws.com',
+        'PASSWORD': 'toor',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }

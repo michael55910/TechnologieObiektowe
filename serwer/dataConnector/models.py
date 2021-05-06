@@ -9,6 +9,25 @@ CoinpaprikaClient = Coinpaprika.Client()
 
 available_coins = CoinpaprikaClient.coins()
 
+exchange_info = BinanceClient.get_exchange_info()
+
+print(exchange_info)
+
+
+class ExchangeInfo(models.Model):
+    timezone = models.CharField(max_length=3, blank=False)
+    server_time = models.BigIntegerField(blank=False, default="0")
+    symbol = models.CharField(max_length=20, primary_key=True, blank=False)
+    status = models.CharField(max_length=20, blank=False)
+    base_asset = models.IntegerField(blank=False, default="0")
+    base_asset_precision = models.IntegerField(blank=False, default="0")
+    quote_asset = models.IntegerField(blank=False, default="0")
+    quote_precision = models.IntegerField(blank=False, default="0")
+    quote_asset_precision = models.IntegerField(blank=False, default="0")
+
+    def str(self):
+        return self.symbol
+
 
 class Cryptocurrency(models.Model):
     #     class CoinType(models.TextChoices):
@@ -33,7 +52,7 @@ class Cryptocurrency(models.Model):
 
 
 class Rate(models.Model):
-    symbol = models.CharField(max_length=20, primary_key=True, blank=False)
+    symbol = models.ForeignKey(ExchangeInfo, on_delete=models.CASCADE)
     price_change = models.FloatField(blank=False)
     price_change_percent = models.FloatField(blank=False)
     weighted_avg_price = models.FloatField(blank=False)
@@ -121,12 +140,13 @@ def update_candles():
     print("Candles updated successfully!")
 
 
-schedule.every(5).seconds.do(update_rates)
-schedule.every(5).seconds.do(update_candles)
+# schedule.every(5).seconds.do(update_rates)
+# schedule.every(5).seconds.do(update_candles)
 
 # schedule.every().day.at("10:00").do(update_rates)
 # schedule.every().day.at("10:00").do(update_candles)
-
+"""
 while True:
     schedule.run_pending()
     time.sleep(1)
+"""
