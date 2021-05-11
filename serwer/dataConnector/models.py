@@ -8,10 +8,6 @@ BinanceClient = Client("y4IYuRu7rcBuBRxbT57hdrUE12UpvMZdzJOdqPGrdS4jTU2oi9onl4bN
 CoinpaprikaClient = Coinpaprika.Client()
 
 
-# exchange_info = BinanceClient.get_exchange_info()
-
-# print(exchange_info)
-
 class Cryptocurrency(models.Model):
     #     class CoinType(models.TextChoices):
     #         COIN = 1, 'coin'
@@ -35,9 +31,9 @@ class Cryptocurrency(models.Model):
 
 
 class ExchangeInfo(models.Model):
+    symbol = models.CharField(max_length=20, primary_key=True, blank=False)
     timezone = models.CharField(max_length=3, blank=False)
     server_time = models.BigIntegerField(blank=False, default="0")
-    symbol = models.CharField(max_length=20, primary_key=True, blank=False)
     status = models.CharField(max_length=20, blank=False)
     base_asset = models.IntegerField(blank=False, default="0")
     base_asset_precision = models.IntegerField(blank=False, default="0")
@@ -50,7 +46,7 @@ class ExchangeInfo(models.Model):
 
 
 class Rate(models.Model):
-    symbol = models.CharField(max_length=10, blank=False)
+    symbol = models.CharField(max_length=20, primary_key=True)
     price_change = models.FloatField(blank=False)
     price_change_percent = models.FloatField(blank=False)
     weighted_avg_price = models.FloatField(blank=False)
@@ -75,6 +71,8 @@ class Rate(models.Model):
 
 
 class Candle(models.Model):
+    id = models.CharField(max_length=80, primary_key=True)
+    symbol = models.CharField(max_length=20, blank=False)
     open_time = models.BigIntegerField(blank=False, default="0")
     open = models.FloatField(blank=False, default="0")
     high = models.FloatField(blank=False, default="0")
@@ -105,10 +103,28 @@ def update_coins():
     Cryptocurrency.objects.bulk_create(coins_list, ignore_conflicts=True)
 
 
+def update_exchanges():
+    exchange_info = BinanceClient.get_exchange_info()
+
+    print(exchange_info)
+
+    exchange_list = []
+
+    for x in exchange_info:
+        new_exchange = ExchangeInfo(symbol=x['symbol'], timezone=x['timezone'], server_time=x['server_time'],
+                                    status=x['status'], base_asset=x['base_asset'],
+                                    base_asset_precision=x['base_asset_precision'], quote_asset=x['quote_asset'],
+                                    quote_precision=x['quote_precision'],
+                                    quote_asset_precision=x['quote_asset_precision'])
+        exchange_list.append(new_exchange)
+
+    ExchangeInfo.objects.bulk_create(exchange_list, ignore_conflicts=True)
+
+
 def update_rates():
     exchange_rates = BinanceClient.get_ticker()
 
-    exchange_list = []
+    rates_list = []
 
     for x in exchange_rates:
         new_rate = Rate(symbol=x['symbol'], price_change=x['priceChange'],
@@ -118,9 +134,9 @@ def update_rates():
                         high_price=x['highPrice'], low_price=x['lowPrice'], volume=x['volume'],
                         quote_volume=x['quoteVolume'], open_time=x['openTime'], close_time=x['closeTime'],
                         first_id=x['firstId'], last_id=x['lastId'], count=x['count'])
-        exchange_list.append(new_rate)
+        rates_list.append(new_rate)
 
-    Rate.objects.bulk_create(exchange_list, ignore_conflicts=True)
+    Rate.objects.bulk_create(rates_list, ignore_conflicts=True)
     print("Exchange rates updated successfully!")
 
 
@@ -131,12 +147,17 @@ def update_candles():
 
     print("Fetching data from API")
 
-    candles = BinanceClient.get_historical_klines("BNBBTC", Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+    current_symbol = "BNBBTC"
+    interval = "1 day ago UTC"
+
+    candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, interval)
 
     candle_list = []
 
     for x in candles:
-        new_candle = Candle(open_time=x[0], open=x[1], high=x[2], low=x[3],
+        id = str(x[0]) + current_symbol + interval + str(x[6])
+
+        new_candle = Candle(id=id, symbol=current_symbol, open_time=x[0], open=x[1], high=x[2], low=x[3],
                             close=x[4], volume=x[5], close_time=x[6],
                             quote_asset_volume=x[7], number_of_trades=x[8],
                             taker_buy_base_asset_volume=x[9], taker_buy_quote_asset_volume=x[10],
@@ -145,7 +166,7 @@ def update_candles():
 
     print("Inserting data to database")
 
-    Candle.objects.bulk_create(candle_list, batch_size=1000)
+    Candle.objects.bulk_create(candle_list, ignore_conflicts=True, batch_size=1000)
     print("Candles updated successfully!")
 
 
@@ -161,4 +182,4 @@ while True:
     time.sleep(1)
 """
 
-# update_coins()
+update_candles()
