@@ -1,11 +1,18 @@
 from rest_framework import serializers
-from .models import Cryptocurrency, Rate, Candle
+from .models import Cryptocurrency, ExchangeInfo, Rate, Candle
 
 
 class CryptocurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Cryptocurrency
         fields = ('id', 'name', 'symbol', 'rank', 'is_new', 'is_active', 'type')
+
+
+class ExchangeInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExchangeInfo
+        fields = ('timezone', 'server_time', 'symbol', 'status', 'base_asset', 'base_asset_precision', 'quote_asset',
+                  'quote_precision', 'quote_asset_precision')
 
 
 class RateSerializer(serializers.ModelSerializer):

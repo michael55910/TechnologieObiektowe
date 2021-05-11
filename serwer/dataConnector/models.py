@@ -7,11 +7,31 @@ BinanceClient = Client("y4IYuRu7rcBuBRxbT57hdrUE12UpvMZdzJOdqPGrdS4jTU2oi9onl4bN
                        "BZ3y4qZ8019zzU6F2hv4WLbDnpeIQMBIuefMHxb1qPeloUayZUbOv1Che8Fzy34C")
 CoinpaprikaClient = Coinpaprika.Client()
 
-available_coins = CoinpaprikaClient.coins()
 
-exchange_info = BinanceClient.get_exchange_info()
+# exchange_info = BinanceClient.get_exchange_info()
 
-print(exchange_info)
+# print(exchange_info)
+
+class Cryptocurrency(models.Model):
+    #     class CoinType(models.TextChoices):
+    #         COIN = 1, 'coin'
+    #         TOKEN = 2, 'token'
+
+    COIN_TYPE = (
+        ('coin', 'coin'),
+        ('token', 'token'),
+    )
+
+    id = models.CharField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=50, blank=False)
+    symbol = models.CharField(max_length=10, blank=False)
+    rank = models.IntegerField(blank=False)
+    is_new = models.BooleanField(blank=False)
+    is_active = models.BooleanField(blank=False)
+    type = models.CharField(choices=COIN_TYPE, max_length=5, blank=False)
+
+    def str(self):
+        return self.name
 
 
 class ExchangeInfo(models.Model):
@@ -29,30 +49,8 @@ class ExchangeInfo(models.Model):
         return self.symbol
 
 
-class Cryptocurrency(models.Model):
-    #     class CoinType(models.TextChoices):
-    #         COIN = 1, 'coin'
-    #         TOKEN = 2, 'token'
-
-    COIN_TYPE = (
-        ('coin', 'coin'),
-        ('token', 'token'),
-    )
-
-    id = models.CharField(max_length=50, primary_key=True, blank=False)
-    name = models.CharField(max_length=50, blank=False)
-    symbol = models.CharField(max_length=10, blank=False)
-    rank = models.IntegerField(blank=False)
-    is_new = models.BooleanField(blank=False)
-    is_active = models.BooleanField(blank=False)
-    type = models.CharField(choices=COIN_TYPE, max_length=5, blank=False)
-
-    def str(self):
-        return self.name
-
-
 class Rate(models.Model):
-    symbol = models.ForeignKey(ExchangeInfo, on_delete=models.CASCADE)
+    symbol = models.CharField(max_length=10, blank=False)
     price_change = models.FloatField(blank=False)
     price_change_percent = models.FloatField(blank=False)
     weighted_avg_price = models.FloatField(blank=False)
@@ -94,15 +92,18 @@ class Candle(models.Model):
         return self.number_of_trades
 
 
-coins_list = []
+def update_coins():
+    available_coins = CoinpaprikaClient.coins()
 
-for x in available_coins:
-    new_coin = Cryptocurrency(id=x['id'], name=x['name'], symbol=x['symbol'], rank=x['rank'],
-                              is_new=x['is_new'], is_active=x['is_active'], type=x['type'])
-    coins_list.append(new_coin)
+    coins_list = []
 
+    for x in available_coins:
+        new_coin = Cryptocurrency(id=x['id'], name=x['name'], symbol=x['symbol'], rank=x['rank'],
+                                  is_new=x['is_new'], is_active=x['is_active'], type=x['type'])
+        coins_list.append(new_coin)
 
-# Cryptocurrency.objects.bulk_create(coins_list)
+    Cryptocurrency.objects.bulk_create(coins_list, ignore_conflicts=True)
+
 
 def update_rates():
     exchange_rates = BinanceClient.get_ticker()
@@ -119,11 +120,17 @@ def update_rates():
                         first_id=x['firstId'], last_id=x['lastId'], count=x['count'])
         exchange_list.append(new_rate)
 
-    Rate.objects.bulk_create(exchange_list)
+    Rate.objects.bulk_create(exchange_list, ignore_conflicts=True)
     print("Exchange rates updated successfully!")
 
 
 def update_candles():
+    print("Candle update start")
+
+    candle_pairs = ["BNBBTC"]
+
+    print("Fetching data from API")
+
     candles = BinanceClient.get_historical_klines("BNBBTC", Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
 
     candle_list = []
@@ -136,7 +143,9 @@ def update_candles():
                             ignore=x[11])
         candle_list.append(new_candle)
 
-    Candle.objects.bulk_create(candle_list)
+    print("Inserting data to database")
+
+    Candle.objects.bulk_create(candle_list, batch_size=1000)
     print("Candles updated successfully!")
 
 
@@ -145,8 +154,11 @@ def update_candles():
 
 # schedule.every().day.at("10:00").do(update_rates)
 # schedule.every().day.at("10:00").do(update_candles)
+
 """
 while True:
     schedule.run_pending()
     time.sleep(1)
 """
+
+# update_coins()

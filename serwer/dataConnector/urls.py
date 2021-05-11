@@ -5,6 +5,8 @@ from dataConnector import views
 urlpatterns = [
     path('cryptocurrency/', views.CryptocurrencyList.as_view()),
     path('cryptocurrency/<int:pk>/', views.CryptocurrencyDetail.as_view()),
+    path('exchangeinfo/', views.ExchangeInfoList.as_view()),
+    path('exchangeinfo/<int:pk>/', views.ExchangeInfoDetail.as_view()),
     path('rate/', views.RateList.as_view()),
     path('rate/<int:pk>/', views.RateDetail.as_view()),
     path('candle/', views.CandleList.as_view()),

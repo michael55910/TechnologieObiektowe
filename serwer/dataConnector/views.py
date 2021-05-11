@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Cryptocurrency, Rate, Candle
-from .serializers import CryptocurrencySerializer, RateSerializer, CandleSerializer
+from .models import Cryptocurrency, ExchangeInfo, Rate, Candle
+from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer
 from rest_framework import generics
 
 
@@ -12,6 +12,16 @@ class CryptocurrencyList(generics.ListCreateAPIView):
 class CryptocurrencyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cryptocurrency.objects.all()
     serializer_class = CryptocurrencySerializer
+
+
+class ExchangeInfoList(generics.ListCreateAPIView):
+    queryset = ExchangeInfo.objects.all()
+    serializer_class = ExchangeInfoSerializer
+
+
+class ExchangeInfoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ExchangeInfo.objects.all()
+    serializer_class = ExchangeInfoSerializer
 
 
 class RateList(generics.ListCreateAPIView):
