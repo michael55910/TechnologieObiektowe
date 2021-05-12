@@ -31,13 +31,11 @@ class Cryptocurrency(models.Model):
 
 
 class ExchangeInfo(models.Model):
-    symbol = models.CharField(max_length=20, primary_key=True, blank=False)
-    timezone = models.CharField(max_length=3, blank=False)
-    server_time = models.BigIntegerField(blank=False, default="0")
+    symbol = models.CharField(max_length=20, primary_key=True)
     status = models.CharField(max_length=20, blank=False)
-    base_asset = models.IntegerField(blank=False, default="0")
+    base_asset = models.CharField(max_length=20, blank=False)
     base_asset_precision = models.IntegerField(blank=False, default="0")
-    quote_asset = models.IntegerField(blank=False, default="0")
+    quote_asset = models.CharField(max_length=20, blank=False)
     quote_precision = models.IntegerField(blank=False, default="0")
     quote_asset_precision = models.IntegerField(blank=False, default="0")
 
@@ -91,6 +89,9 @@ class Candle(models.Model):
 
 
 def update_coins():
+    print("Cryptocurrency update start")
+    print("Fetching data from API")
+
     available_coins = CoinpaprikaClient.coins()
 
     coins_list = []
@@ -100,28 +101,39 @@ def update_coins():
                                   is_new=x['is_new'], is_active=x['is_active'], type=x['type'])
         coins_list.append(new_coin)
 
+    print("Inserting data to database")
+
     Cryptocurrency.objects.bulk_create(coins_list, ignore_conflicts=True)
+
+    print("Cryptocurrency updated successfully!")
 
 
 def update_exchanges():
-    exchange_info = BinanceClient.get_exchange_info()
+    print("ExchangeInfo update start")
+    print("Fetching data from API")
 
-    print(exchange_info)
+    exchange_info = BinanceClient.get_exchange_info()
+    symbols = exchange_info['symbols']
 
     exchange_list = []
 
-    for x in exchange_info:
-        new_exchange = ExchangeInfo(symbol=x['symbol'], timezone=x['timezone'], server_time=x['server_time'],
-                                    status=x['status'], base_asset=x['base_asset'],
-                                    base_asset_precision=x['base_asset_precision'], quote_asset=x['quote_asset'],
-                                    quote_precision=x['quote_precision'],
-                                    quote_asset_precision=x['quote_asset_precision'])
+    for symbol in symbols:
+        new_exchange = ExchangeInfo(symbol=symbol['symbol'], status=symbol['status'], base_asset=symbol['baseAsset'],
+                                    base_asset_precision=symbol['baseAssetPrecision'], quote_asset=symbol['quoteAsset'],
+                                    quote_precision=symbol['quotePrecision'],
+                                    quote_asset_precision=symbol['quoteAssetPrecision'])
         exchange_list.append(new_exchange)
+
+    print("Inserting data to database")
 
     ExchangeInfo.objects.bulk_create(exchange_list, ignore_conflicts=True)
 
+    print("ExchangeInfo updated successfully!")
+
 
 def update_rates():
+    print("Rates update start")
+    print("Fetching data from API")
     exchange_rates = BinanceClient.get_ticker()
 
     rates_list = []
@@ -136,6 +148,8 @@ def update_rates():
                         first_id=x['firstId'], last_id=x['lastId'], count=x['count'])
         rates_list.append(new_rate)
 
+    print("Inserting data to database")
+
     Rate.objects.bulk_create(rates_list, ignore_conflicts=True)
     print("Exchange rates updated successfully!")
 
@@ -145,10 +159,10 @@ def update_candles():
 
     candle_pairs = ["BNBBTC"]
 
-    print("Fetching data from API")
-
     current_symbol = "BNBBTC"
     interval = "1 day ago UTC"
+
+    print("Fetching data from API")
 
     candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, interval)
 

@@ -11,7 +11,7 @@ class CryptocurrencySerializer(serializers.ModelSerializer):
 class ExchangeInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExchangeInfo
-        fields = ('timezone', 'server_time', 'symbol', 'status', 'base_asset', 'base_asset_precision', 'quote_asset',
+        fields = ('symbol', 'status', 'base_asset', 'base_asset_precision', 'quote_asset',
                   'quote_precision', 'quote_asset_precision')
 
 
