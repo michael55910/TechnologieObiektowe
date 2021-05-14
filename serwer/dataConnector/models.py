@@ -164,7 +164,9 @@ def update_candles():
 
     print("Fetching data from API")
 
-    candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, interval)
+    #candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, interval)
+    candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, "1 Dec, 2007",
+                                                  "12 May, 2021")
 
     candle_list = []
 
@@ -196,4 +198,4 @@ while True:
     time.sleep(1)
 """
 
-update_candles()
+#update_candles()
