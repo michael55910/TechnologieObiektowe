@@ -6,8 +6,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from './router'
 //import 'zingchart/es6'; //https://www.zingchart.com/hello/create-interactive-charts-in-vue-with-zingchart
 //import zingchartVue from 'zingchart-vue';
-import VueFusionCharts from 'vue-fusioncharts'; //https://fusioncharts.github.io/vue-fusioncharts
+import VueFusionCharts from 'vue-fusioncharts';
 import FusionCharts from 'fusioncharts';
+import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
 import Charts from 'fusioncharts/fusioncharts.charts'
 
 Vue.config.productionTip = false
@@ -17,7 +18,7 @@ Vue.use(BootstrapVueIcons)
 
 //Vue.component('zingchart', zingchartVue);
 
-Vue.use(VueFusionCharts, FusionCharts, Charts);
+Vue.use(VueFusionCharts, FusionCharts, FusionTheme, Charts);
 
 new Vue({
   router,
