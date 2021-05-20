@@ -287,7 +287,7 @@ export default {
     fetch_data: function () {
       axios({
         method: 'get',
-        url: 'http://localhost:8000/api/rate/'
+        url: '/api/rate/'
       })
           .then(function (response) {
             console.log(response)
