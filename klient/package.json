@@ -8,11 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "apexcharts": "^3.26.3",
+    "axios": "^0.21.1",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
     "fusioncharts": "^3.16.0",
     "jquery": "^3.6.0",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.1",
     "vue-fusioncharts": "^3.1.0",
     "vue-router": "^3.5.1",
     "zingchart": "^2.9.3",

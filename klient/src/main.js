@@ -4,21 +4,21 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from './router'
-//import 'zingchart/es6'; //https://www.zingchart.com/hello/create-interactive-charts-in-vue-with-zingchart
-//import zingchartVue from 'zingchart-vue';
-import VueFusionCharts from 'vue-fusioncharts';
-import FusionCharts from 'fusioncharts';
-import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
-import Charts from 'fusioncharts/fusioncharts.charts'
+import VueApexCharts from 'vue-apexcharts'
+import axios from 'axios'
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.withCredentials = true;
 
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 
-//Vue.component('zingchart', zingchartVue);
+Vue.use(VueApexCharts, axios)
 
-Vue.use(VueFusionCharts, FusionCharts, FusionTheme, Charts);
+Vue.component('apexchart', VueApexCharts)
 
 new Vue({
   router,
