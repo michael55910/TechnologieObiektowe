@@ -7,7 +7,7 @@ BinanceClient = Client("y4IYuRu7rcBuBRxbT57hdrUE12UpvMZdzJOdqPGrdS4jTU2oi9onl4bN
 
 class Candle(models.Model):
     symbol = models.CharField(max_length=20, blank=False)
-    interval = models.CharField(max_length=30, blank=False, default="1 day ago UTC")
+    interval = models.CharField(max_length=30, blank=False)
     open_time = models.BigIntegerField(blank=False, default="0")
     open = models.FloatField(blank=False, default="0")
     high = models.FloatField(blank=False, default="0")
@@ -31,9 +31,9 @@ class Candle(models.Model):
 def update_candles():
     print("Candle update start")
 
-    candle_pairs = ["BNBBTC"]
+    candle_pairs = ["BNBBTC", "ETHBTC"]
 
-    current_symbol = "BNBBTC"
+    current_symbol = "ETHBTC"
     interval = "1 day ago UTC"
 
     print("Fetching data from API")

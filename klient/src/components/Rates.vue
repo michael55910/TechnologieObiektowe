@@ -1,6 +1,7 @@
 <template>
   <div v-if="dataCheck">
     <apexchart height="350" type="candlestick" :options="chartOptions" :series="series"></apexchart>
+    <b-button variant="outline-primary" @click="updateChart">Aktualizuj dane</b-button>
   </div>
 </template>
 
@@ -42,7 +43,7 @@ export default {
   created() {
     axios({
       method: 'get',
-      url: 'candle/'
+      url: 'candle/?search=BNBBTC'
     })
         .then((response) => {
           const newData = []
@@ -60,6 +61,30 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+  },
+  methods: {
+    updateChart() {
+      axios({
+        method: 'get',
+        url: 'candle/?search=ETHBTC'
+      })
+          .then((response) => {
+            const newData = []
+            for (let i = 0; i < response.data.length; i++) {
+              let push_value = {};
+              push_value.x = new Date(response.data[i]['open_time']);
+              push_value.y = [response.data[i]['open'], response.data[i]['high'], response.data[i]['low'], response.data[i]['close']];
+              newData.push(push_value);
+            }
+            this.series = [{
+              data: newData
+            }]
+            this.dataCheck = true;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
   }
 }
 </script>
