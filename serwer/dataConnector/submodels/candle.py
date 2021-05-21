@@ -34,11 +34,11 @@ def update_candles():
     candle_pairs = ["BNBBTC", "ETHBTC"]
 
     current_symbol = "ETHBTC"
-    interval = "1 day ago UTC"
+    interval = "1 minute"
 
     print("Fetching data from API")
 
-    candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, interval)
+    candles = BinanceClient.get_historical_klines(current_symbol, Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
 
     candle_list = []
 

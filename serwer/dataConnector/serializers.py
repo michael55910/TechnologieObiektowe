@@ -26,5 +26,6 @@ class RateSerializer(serializers.ModelSerializer):
 class CandleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candle
-        fields = ('symbol', 'open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time', 'quote_asset_volume',
-                  'number_of_trades', 'taker_buy_base_asset_volume', 'taker_buy_quote_asset_volume', 'ignore')
+        fields = ('symbol', 'interval', 'open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
+                  'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume',
+                  'taker_buy_quote_asset_volume', 'ignore')
