@@ -4,8 +4,8 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from './router'
-import VueApexCharts from 'vue-apexcharts'
 import axios from 'axios'
+import VueApexCharts from 'vue-apexcharts'
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -13,11 +13,7 @@ axios.defaults.withCredentials = true;
 
 Vue.config.productionTip = false
 
-Vue.use(BootstrapVue)
-Vue.use(BootstrapVueIcons)
-
-Vue.use(VueApexCharts, axios)
-
+Vue.use(BootstrapVue, BootstrapVueIcons, axios, VueApexCharts)
 Vue.component('apexchart', VueApexCharts)
 
 new Vue({
