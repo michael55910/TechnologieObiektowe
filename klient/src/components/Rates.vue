@@ -1,9 +1,6 @@
 <template>
   <div v-if="dataCheck">
     <apexchart height="350" type="candlestick" :options="chartOptions" :series="series"></apexchart>
-    <div>
-      <b-button variant="outline-primary" @click="updateChart">Update!</b-button>
-    </div>
   </div>
 </template>
 
@@ -20,20 +17,7 @@ export default {
     return {
       dataCheck: false,
       series: [{
-        data: [
-          {
-            x: new Date(1538778600000),
-            y: [6629.81, 6650.5, 6623.04, 6633.33]
-          },
-          {
-            x: new Date(1538780400000),
-            y: [6632.01, 6643.59, 6620, 6630.11]
-          },
-          {
-            x: new Date(1538782200000),
-            y: [6630.71, 6648.95, 6623.34, 6635.65]
-          },
-        ]
+        data: []
       }],
       chartOptions: {
         chart: {
@@ -41,7 +25,7 @@ export default {
           height: 350
         },
         title: {
-          text: 'CandleStick Chart',
+          text: 'Wykres świecowy',
           align: 'left'
         },
         xaxis: {
@@ -58,40 +42,24 @@ export default {
   created() {
     axios({
       method: 'get',
-      url: 'rate/'
+      url: 'candle/'
     })
         .then((response) => {
-          for (let i = 0; i < 10; i++) {
-            //let x = new Date(response.data[i]['open_time']);
-            //let y = [6630.71, 6648.95, 6623.34, 6635.65];
-            //this.ohlcv.push(response.data[i]['open_time'], y);
-            console.log(response);
+          const newData = []
+          for (let i = 0; i < response.data.length; i++) {
+            let push_value = {};
+            push_value.x = new Date(response.data[i]['open_time']);
+            push_value.y = [response.data[i]['open'], response.data[i]['high'], response.data[i]['low'], response.data[i]['close']];
+            newData.push(push_value);
           }
-          console.log(this.series[0].data[0]['x']);
-          //this.series[0].data.pop();
+          this.series = [{
+            data: newData
+          }]
           this.dataCheck = true;
         })
         .catch(function (error) {
           console.log(error);
         });
-  },
-  methods: {
-    updateChart() {
-      const newData = [
-        {
-          x: new Date(1538778600000),
-          y: [6629.81, 6650.5, 6623.04, 6633.33]
-        },
-        {
-          x: new Date(1538780400000),
-          y: [6632.01, 6643.59, 6620, 6630.11]
-        },
-      ]
-
-      this.series = [{
-        data: newData
-      }]
-    }
   }
 }
 </script>
