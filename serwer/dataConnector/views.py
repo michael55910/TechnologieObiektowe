@@ -1,7 +1,32 @@
-from django.shortcuts import render
 from .models import Cryptocurrency, ExchangeInfo, Rate, Candle
+from .submodels import update_coins
+from .submodels import update_exchanges
+from .submodels import update_rates
+from .submodels import update_candles
 from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer
 from rest_framework import generics, filters
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+
+class CryptocurrencyUpdate(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(update_coins())
+
+
+class ExchangeInfoUpdate(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(update_exchanges())
+
+
+class RateUpdate(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(update_rates())
+
+
+class CandleUpdate(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(update_candles())
 
 
 class CryptocurrencyList(generics.ListCreateAPIView):

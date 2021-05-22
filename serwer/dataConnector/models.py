@@ -19,8 +19,3 @@ while True:
     schedule.run_pending()
     time.sleep(1)
 """
-
-# update_coins()
-# update_exchanges()
-# update_rates()
-# update_candles()

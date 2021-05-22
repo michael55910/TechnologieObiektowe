@@ -1,5 +1,4 @@
 from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
 from dataConnector import views
 
 urlpatterns = [
@@ -11,4 +10,8 @@ urlpatterns = [
     path('rate/<int:pk>/', views.RateDetail.as_view()),
     path('candle/', views.CandleList.as_view()),
     path('candle/<int:pk>/', views.CandleDetail.as_view()),
+    path('cryptocurrencyupdate/', views.CryptocurrencyUpdate.as_view()),
+    path('exchangeinfoupdate/', views.ExchangeInfoUpdate.as_view()),
+    path('rateupdate/', views.RateUpdate.as_view()),
+    path('candleupdate/', views.CandleUpdate.as_view()),
 ]
