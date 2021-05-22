@@ -14,8 +14,8 @@ class Cryptocurrency(models.Model):
         ('token', 'token'),
     )
 
-    id = models.CharField(max_length=50, primary_key=True)
-    name = models.CharField(max_length=50, blank=False)
+    id = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=100, blank=False)
     symbol = models.CharField(max_length=10, blank=False)
     rank = models.IntegerField(blank=False)
     is_new = models.BooleanField(blank=False)
