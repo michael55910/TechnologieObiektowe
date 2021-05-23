@@ -16,7 +16,7 @@ class Cryptocurrency(models.Model):
 
     id = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=100, blank=False)
-    symbol = models.CharField(max_length=10, blank=False)
+    symbol = models.CharField(max_length=10, blank=False, unique=True)
     rank = models.IntegerField(blank=False)
     is_new = models.BooleanField(blank=False)
     is_active = models.BooleanField(blank=False)
@@ -35,9 +35,10 @@ def update_coins():
     coins_list = []
 
     for x in available_coins:
-        new_coin = Cryptocurrency(id=x['id'], name=x['name'], symbol=x['symbol'], rank=x['rank'],
-                                  is_new=x['is_new'], is_active=x['is_active'], type=x['type'])
-        coins_list.append(new_coin)
+        if x['is_active'] and x['type'] == 'coin':
+            new_coin = Cryptocurrency(id=x['id'], name=x['name'], symbol=x['symbol'], rank=x['rank'],
+                                      is_new=x['is_new'], is_active=x['is_active'], type=x['type'])
+            coins_list.append(new_coin)
 
     print("Inserting data to database")
 

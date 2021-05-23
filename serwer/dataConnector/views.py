@@ -60,7 +60,7 @@ class RateDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CandleList(generics.ListCreateAPIView):
-    queryset = Candle.objects.all()
+    queryset = Candle.objects.all().order_by('-close_time')
     serializer_class = CandleSerializer
     search_fields = ['symbol']
     filter_backends = (filters.SearchFilter,)

@@ -55,7 +55,11 @@ export default {
       chartOptions: {
         chart: {
           type: 'candlestick',
-          height: 350
+          height: 350,
+          animations:
+              {
+                enabled: false
+              }
         },
         title: {
           text: 'Wykres świecowy',
@@ -79,7 +83,7 @@ export default {
     })
         .then((response) => {
           const newData = []
-          for (let i = 0; i < response.data.length; i++) {
+          for (let i = 0; i < 1440; i++) {
             let push_value = {};
             push_value.x = new Date(response.data[i]['open_time']);
             push_value.y = [response.data[i]['open'], response.data[i]['high'], response.data[i]['low'], response.data[i]['close']];
@@ -102,7 +106,7 @@ export default {
       })
           .then((response) => {
             const newData = []
-            for (let i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < 1440; i++) {
               let push_value = {};
               push_value.x = new Date(response.data[i]['open_time']);
               push_value.y = [response.data[i]['open'], response.data[i]['high'], response.data[i]['low'], response.data[i]['close']];
