@@ -14,6 +14,8 @@ import schedule, time
 # schedule.every().day.at("10:00").do(update_rates)
 # schedule.every().day.at("10:00").do(update_candles)
 
+# update_candles()
+
 """
 while True:
     schedule.run_pending()

@@ -5,14 +5,19 @@ import pandas as pd
 from dataConnector.models import Candle
 
 
-class Predictions:
-    #candles: list[Candle]
+class Prediction:
+    # candles: list[Candle]
 
-    def __init__(self, pair_symbol):
-        self.candles = Candle.objects.filter(symbol=pair_symbol).only('open', 'high', 'low', 'close', 'volume',
-                                                                      'quote_asset_volume', 'number_of_trades',
-                                                                      'taker_buy_base_asset_volume',
-                                                                      'taker_buy_quote_asset_volume')
+    def __init__(self, pair_symbol, interval):
+        self.candles = Candle.objects.filter(symbol=pair_symbol,
+                                             is_real=True,
+                                             interval=interval).only('open', 'high',
+                                                                     'low', 'close',
+                                                                     'volume',
+                                                                     'quote_asset_volume',
+                                                                     'number_of_trades',
+                                                                     'taker_buy_base_asset_volume',
+                                                                     'taker_buy_quote_asset_volume')
 
     # def get_prediction(self, window_size):
 
