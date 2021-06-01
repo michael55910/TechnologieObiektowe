@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Max
+
+from Predictor.models import PredictionType
 from .exchangeinfo import ExchangeInfo
 from binance.client import Client
 
@@ -8,21 +10,40 @@ BinanceClient = Client("y4IYuRu7rcBuBRxbT57hdrUE12UpvMZdzJOdqPGrdS4jTU2oi9onl4bN
 
 
 class Candle(models.Model):
+    KLINE_INTERVAL = [
+        (Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_1MINUTE),
+        (Client.KLINE_INTERVAL_3MINUTE, Client.KLINE_INTERVAL_3MINUTE),
+        (Client.KLINE_INTERVAL_5MINUTE, Client.KLINE_INTERVAL_5MINUTE),
+        (Client.KLINE_INTERVAL_15MINUTE, Client.KLINE_INTERVAL_15MINUTE),
+        (Client.KLINE_INTERVAL_30MINUTE, Client.KLINE_INTERVAL_30MINUTE),
+        (Client.KLINE_INTERVAL_1HOUR, Client.KLINE_INTERVAL_1HOUR),
+        (Client.KLINE_INTERVAL_2HOUR, Client.KLINE_INTERVAL_2HOUR),
+        (Client.KLINE_INTERVAL_4HOUR, Client.KLINE_INTERVAL_4HOUR),
+        (Client.KLINE_INTERVAL_6HOUR, Client.KLINE_INTERVAL_6HOUR),
+        (Client.KLINE_INTERVAL_8HOUR, Client.KLINE_INTERVAL_8HOUR),
+        (Client.KLINE_INTERVAL_12HOUR, Client.KLINE_INTERVAL_12HOUR),
+        (Client.KLINE_INTERVAL_1DAY, Client.KLINE_INTERVAL_1DAY),
+        (Client.KLINE_INTERVAL_3DAY, Client.KLINE_INTERVAL_3DAY),
+        (Client.KLINE_INTERVAL_1WEEK, Client.KLINE_INTERVAL_1WEEK),
+        (Client.KLINE_INTERVAL_1MONTH, Client.KLINE_INTERVAL_1MONTH)
+    ]
+
     symbol = models.ForeignKey(ExchangeInfo, on_delete=models.CASCADE)
-    interval = models.CharField(max_length=3, blank=False)
-    open_time = models.BigIntegerField(blank=False, default="0")  # max_length=14
+    interval = models.CharField(choices=KLINE_INTERVAL, max_length=3, blank=False)
+    open_time = models.BigIntegerField(blank=False)  # max_length=14
     # open_time = models.DateTimeField(blank=False)
-    open = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    high = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    low = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    close = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    volume = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    close_time = models.BigIntegerField(blank=False, default="0")  # max_length=14
-    quote_asset_volume = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    number_of_trades = models.IntegerField(blank=False, default="0")
-    taker_buy_base_asset_volume = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
-    taker_buy_quote_asset_volume = models.DecimalField(blank=False, default="0", decimal_places=8, max_digits=14)
+    open = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    high = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    low = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    close = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    close_time = models.BigIntegerField(blank=False)  # max_length=14
+    quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    number_of_trades = models.IntegerField(blank=False)
+    taker_buy_base_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    taker_buy_quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
     is_real = models.BooleanField(blank=False, default=True)
+    prediction_type = models.CharField(blank=True, max_length=4, choices=PredictionType.choices)
 
     class Meta:
         unique_together = ('symbol', 'interval', 'open_time', 'close_time', 'is_real')
