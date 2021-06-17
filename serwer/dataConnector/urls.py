@@ -8,7 +8,7 @@ urlpatterns = [
     path('exchangeinfo/<int:pk>/', views.ExchangeInfoDetail.as_view()),
     path('rate/', views.RateList.as_view()),
     path('rate/<int:pk>/', views.RateDetail.as_view()),
-    path('candle/', views.CandleList.as_view()),
+    path('candles', views.CandlesList.as_view()),
     path('candle/<int:pk>/', views.CandleDetail.as_view()),
     path('cryptocurrencyupdate/', views.CryptocurrencyUpdate.as_view()),
     path('exchangeinfoupdate/', views.ExchangeInfoUpdate.as_view()),

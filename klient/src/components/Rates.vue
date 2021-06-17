@@ -31,6 +31,7 @@ export default {
   withCredentials: true,
   data() {
     return {
+      page_size: 100,
       first_crypto_selection: 'BTC',
       first_crypto_options: [
         {value: 'BTC', text: 'Bitcoin'},
@@ -79,14 +80,15 @@ export default {
   created() {
     axios({
       method: 'get',
-      url: 'candle/?search=BNBBTC'
+      url: 'candles?symbol=BNBBTC&interval=1m&is_real=True&page_size=' + this.page_size
     })
         .then((response) => {
+          console.log(response);
           const newData = []
-          for (let i = 0; i < 1440; i++) {
+          for (let i = 0; i < this.page_size; i++) {
             let push_value = {};
-            push_value.x = new Date(response.data[i]['open_time']);
-            push_value.y = [response.data[i]['open'], response.data[i]['high'], response.data[i]['low'], response.data[i]['close']];
+            push_value.x = new Date(response.data.results[i]['open_time']);
+            push_value.y = [response.data.results[i]['open'], response.data.results[i]['high'], response.data.results[i]['low'], response.data.results[i]['close']];
             newData.push(push_value);
           }
           this.series = [{
@@ -108,8 +110,8 @@ export default {
             const newData = []
             for (let i = 0; i < 1440; i++) {
               let push_value = {};
-              push_value.x = new Date(response.data[i]['open_time']);
-              push_value.y = [response.data[i]['open'], response.data[i]['high'], response.data[i]['low'], response.data[i]['close']];
+              push_value.x = new Date(response.data.results[i]['open_time']);
+              push_value.y = [response.data.results[i]['open'], response.data.results[i]['high'], response.data.results[i]['low'], response.data.results[i]['close']];
               newData.push(push_value);
             }
             this.series = [{
