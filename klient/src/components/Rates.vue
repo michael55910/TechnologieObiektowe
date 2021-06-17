@@ -1,5 +1,5 @@
 <template>
-  <div v-if="dataCheck">
+  <div v-if="firstCheck">
     <apexchart height="350" type="candlestick" :options="chartOptions" :series="series"></apexchart>
 
     <b-form inline>
@@ -15,23 +15,20 @@
         <b-form-select v-model="period_selection" :options="period_options"></b-form-select>
       </b-input-group>
 
-      <b-button variant="outline-primary" @click="updateChart">Aktualizuj dane</b-button>
+      <b-button variant="primary" @click="updateChart">Aktualizuj</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+import DataService from "@/service/DataService";
 
 export default {
   name: "Rates",
   withCredentials: true,
   data() {
     return {
-      page_size: 100,
+      pageSize: 100,
       first_crypto_selection: 'BTC',
       first_crypto_options: [
         {value: 'BTC', text: 'Bitcoin'},
@@ -49,7 +46,8 @@ export default {
         {value: 'ETHBTC', text: 'Miesiąc'},
         {value: 'ETHBTC', text: 'Rok'}
       ],
-      dataCheck: false,
+      dataLoading: true,
+      firstCheck: false,
       series: [{
         data: []
       }],
@@ -78,37 +76,15 @@ export default {
     };
   },
   created() {
-    axios({
-      method: 'get',
-      url: 'candles?symbol=BNBBTC&interval=1m&is_real=True&page_size=' + this.page_size
-    })
-        .then((response) => {
-          console.log(response);
-          const newData = []
-          for (let i = 0; i < this.page_size; i++) {
-            let push_value = {};
-            push_value.x = new Date(response.data.results[i]['open_time']);
-            push_value.y = [response.data.results[i]['open'], response.data.results[i]['high'], response.data.results[i]['low'], response.data.results[i]['close']];
-            newData.push(push_value);
-          }
-          this.series = [{
-            data: newData
-          }]
-          this.dataCheck = true;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    this.updateChart();
   },
   methods: {
     updateChart() {
-      axios({
-        method: 'get',
-        url: 'candle/?search=' + this.first_crypto_selection + this.second_crypto_selection
-      })
-          .then((response) => {
+      this.dataLoading = true;
+      DataService.getCandles('BNBBTC', '1m', true, undefined, this.pageSize, undefined)
+          .then(response => {
             const newData = []
-            for (let i = 0; i < 1440; i++) {
+            for (let i = 0; i < this.pageSize; i++) {
               let push_value = {};
               push_value.x = new Date(response.data.results[i]['open_time']);
               push_value.y = [response.data.results[i]['open'], response.data.results[i]['high'], response.data.results[i]['low'], response.data.results[i]['close']];
@@ -117,9 +93,10 @@ export default {
             this.series = [{
               data: newData
             }]
-            this.dataCheck = true;
+            this.dataLoading = false;
+            this.firstCheck = true;
           })
-          .catch(function (error) {
+          .catch(error => {
             console.log(error);
           });
     }
