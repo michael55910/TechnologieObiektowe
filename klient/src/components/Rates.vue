@@ -3,16 +3,12 @@
     <apexchart height="350" type="candlestick" :options="chartOptions" :series="series"></apexchart>
 
     <b-form inline>
-      <b-input-group prepend="Pierwsza kryptowaluta" class="mb-2 mr-sm-2 mb-sm-0">
-        <b-form-select v-model="first_crypto_selection" :options="first_crypto_options"></b-form-select>
+      <b-input-group prepend="Para kryptowalut: " class="mb-2 mr-sm-2 mb-sm-0">
+        <b-form-select v-model="selectedPairSymbol" :options="pairs" text-field="symbol" value-field="symbol"></b-form-select>
       </b-input-group>
 
-      <b-input-group prepend="Druga kryptowaluta" class="mb-2 mr-sm-2 mb-sm-0">
-        <b-form-select v-model="second_crypto_selection" :options="second_crypto_options"></b-form-select>
-      </b-input-group>
-
-      <b-input-group prepend="Okres czasu" class="mb-2 mr-sm-2 mb-sm-0">
-        <b-form-select v-model="period_selection" :options="period_options"></b-form-select>
+      <b-input-group prepend="Interwał" class="mb-2 mr-sm-2 mb-sm-0">
+        <b-form-select v-model="selectedInterval" :options="intervals"></b-form-select>
       </b-input-group>
 
       <b-button variant="primary" @click="updateChart">Aktualizuj</b-button>
@@ -29,22 +25,15 @@ export default {
   data() {
     return {
       pageSize: 100,
+      pairs: [],
+      selectedPairSymbol: 'BNBBTC',
+      intervals: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M'],
+      selectedInterval: '1m',
+
       first_crypto_selection: 'BTC',
       first_crypto_options: [
         {value: 'BTC', text: 'Bitcoin'},
         {value: 'ETH', text: 'Ethereum'}
-      ],
-      second_crypto_selection: 'BTC',
-      second_crypto_options: [
-        {value: 'BTC', text: 'Bitcoin'},
-        {value: 'ETH', text: 'Ethereum'}
-      ],
-      period_selection: 'BNBBTC',
-      period_options: [
-        {value: 'BNBBTC', text: 'Dzień'},
-        {value: 'ETHBTC', text: 'Tydzień'},
-        {value: 'ETHBTC', text: 'Miesiąc'},
-        {value: 'ETHBTC', text: 'Rok'}
       ],
       dataLoading: true,
       firstCheck: false,
@@ -76,12 +65,13 @@ export default {
     };
   },
   created() {
+    this.getPairs();
     this.updateChart();
   },
   methods: {
     updateChart() {
       this.dataLoading = true;
-      DataService.getCandles('BNBBTC', '1m', true, undefined, this.pageSize, undefined)
+      DataService.getCandles(this.selectedPairSymbol, this.selectedInterval, true, undefined, this.pageSize, undefined)
           .then(response => {
             const newData = []
             for (let i = 0; i < this.pageSize; i++) {
@@ -95,6 +85,15 @@ export default {
             }]
             this.dataLoading = false;
             this.firstCheck = true;
+          })
+          .catch(error => {
+            console.log(error);
+          });
+    },
+    getPairs() {
+      DataService.getAllPairs('TRADING')
+          .then(response => {
+            this.pairs = response.data;
           })
           .catch(error => {
             console.log(error);

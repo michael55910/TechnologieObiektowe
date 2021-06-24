@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotFound, HttpResponseBadRequest
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
@@ -8,7 +9,8 @@ from .submodels import update_coins
 from .submodels import update_exchanges
 from .submodels import update_rates
 from .submodels import update_candles
-from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer
+from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer, \
+    PairsSerializer
 from rest_framework import generics, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -111,4 +113,29 @@ class CandlesList(generics.ListAPIView):
     pagination_class = CandlesPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['symbol', 'interval', 'is_real', 'prediction_type']
+
     # ordering_fields = ['-close_time']
+
+    def dispatch(self, request, *args, **kwargs):
+        # print(kwargs.get('symbol'))
+        # print(kwargs.get('interval'))
+        # print(kwargs)
+        # print(self.kwargs)
+        # print(args)
+        # print(self.args)
+        # print(request.method)
+        # if kwargs.get('symbol') is None and kwargs.get('interval') is None:
+        #     # raise ValidationError(
+        #     #     "Missing required parameters!"
+        #     # )
+        #     return HttpResponseBadRequest()
+        update_candles()
+        response = super().dispatch(request, *args, **kwargs)
+        return response
+
+
+class PairsList(generics.ListAPIView):
+    queryset = ExchangeInfo.objects.all()
+    serializer_class = PairsSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['symbol', 'status', 'base_asset__symbol', 'quote_asset__symbol']

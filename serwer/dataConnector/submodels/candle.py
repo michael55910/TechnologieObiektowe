@@ -10,6 +10,7 @@ BinanceClient = Client("y4IYuRu7rcBuBRxbT57hdrUE12UpvMZdzJOdqPGrdS4jTU2oi9onl4bN
 
 
 class Candle(models.Model):
+    candle_pairs = ["BNBBTC", "ETHBTC"]
     KLINE_INTERVAL = [
         (Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_1MINUTE),
         (Client.KLINE_INTERVAL_3MINUTE, Client.KLINE_INTERVAL_3MINUTE),
@@ -53,30 +54,25 @@ class Candle(models.Model):
         return self.number_of_trades
 
 
-def update_candles():
+def update_candles(symbol="BNBBTC", interval=Client.KLINE_INTERVAL_1MINUTE):
     print("Candle update start")
 
-    candle_pairs = ["BNBBTC", "ETHBTC"]
-
-    current_symbol = "BNBBTC"
-    interval = Client.KLINE_INTERVAL_1MINUTE
-
-    args_candles = Candle.objects.filter(symbol=current_symbol, interval=interval, is_real=True)
+    args_candles = Candle.objects.filter(symbol=symbol, interval=interval, is_real=True)
     last_candle = args_candles.aggregate(Max('open_time'))
     if last_candle['open_time__max']:
         max_open_time = last_candle['open_time__max']
     else:
         max_open_time = 0
 
-    if ExchangeInfo.objects.filter(symbol=current_symbol).count() > 0:
+    if ExchangeInfo.objects.filter(symbol=symbol).count() > 0:
         print("Fetching data from API")
 
         # candles = BinanceClient.get_historical_klines(current_symbol, interval, "1 day ago UTC")
-        candles = BinanceClient.get_historical_klines(current_symbol, interval, max_open_time)
+        candles = BinanceClient.get_historical_klines(symbol, interval, max_open_time)
 
         candle_list = []
 
-        current_symbol_fk = ExchangeInfo.objects.get(symbol=current_symbol)
+        current_symbol_fk = ExchangeInfo.objects.get(symbol=symbol)
         for x in candles:
             new_candle = Candle(symbol=current_symbol_fk, interval=interval,
                                 open_time=x[0],

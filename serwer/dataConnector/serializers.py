@@ -29,3 +29,12 @@ class CandleSerializer(serializers.ModelSerializer):
         fields = ('symbol', 'interval', 'open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
                   'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume',
                   'taker_buy_quote_asset_volume', 'is_real', 'prediction_type')
+
+
+class PairsSerializer(serializers.ModelSerializer):
+    base_asset = serializers.StringRelatedField(many=False)
+    quote_asset = serializers.StringRelatedField(many=False)
+
+    class Meta:
+        model = ExchangeInfo
+        fields = ('symbol', 'status', 'base_asset', 'quote_asset')

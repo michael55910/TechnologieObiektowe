@@ -14,6 +14,14 @@ class DataService {
         })
     }
 
+    getAllPairs(status = undefined) {
+        return http.get("pairs", {
+            params: {
+                status: status
+            }
+        })
+    }
+
     boolParam(val) {
         return val ? 'True' : 'False'
     }

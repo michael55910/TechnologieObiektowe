@@ -25,6 +25,10 @@ class Cryptocurrency(models.Model):
     def str(self):
         return self.name
 
+    def __str__(self):
+        return '%s' % self.symbol
+        # return '%s (%s)' % (self.name, self.symbol)
+
 
 def update_coins():
     print("Cryptocurrency update start")
