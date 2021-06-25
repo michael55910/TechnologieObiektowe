@@ -29,12 +29,6 @@ export default {
       selectedPairSymbol: 'BNBBTC',
       intervals: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M'],
       selectedInterval: '1m',
-
-      first_crypto_selection: 'BTC',
-      first_crypto_options: [
-        {value: 'BTC', text: 'Bitcoin'},
-        {value: 'ETH', text: 'Ethereum'}
-      ],
       dataLoading: true,
       firstCheck: false,
       series: [{
@@ -74,7 +68,7 @@ export default {
       DataService.getCandles(this.selectedPairSymbol, this.selectedInterval, true, undefined, this.pageSize, undefined)
           .then(response => {
             const newData = []
-            for (let i = 0; i < this.pageSize; i++) {
+            for (let i = 0; i < response.data.results.length; i++) {
               let push_value = {};
               push_value.x = new Date(response.data.results[i]['open_time']);
               push_value.y = [response.data.results[i]['open'], response.data.results[i]['high'], response.data.results[i]['low'], response.data.results[i]['close']];

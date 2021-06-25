@@ -37,12 +37,12 @@ class Candle(models.Model):
     high = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
     low = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
     close = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
-    volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    volume = models.DecimalField(blank=False, decimal_places=8, max_digits=18)
     close_time = models.BigIntegerField(blank=False)  # max_length=14
-    quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=18)
     number_of_trades = models.IntegerField(blank=False)
-    taker_buy_base_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
-    taker_buy_quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=14)
+    taker_buy_base_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=18)
+    taker_buy_quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=18)
     is_real = models.BooleanField(blank=False, default=True)
     prediction_type = models.CharField(blank=True, max_length=4, choices=PredictionType.choices)
 

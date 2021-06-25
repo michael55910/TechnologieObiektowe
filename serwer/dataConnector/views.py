@@ -117,19 +117,17 @@ class CandlesList(generics.ListAPIView):
     # ordering_fields = ['-close_time']
 
     def dispatch(self, request, *args, **kwargs):
-        # print(kwargs.get('symbol'))
-        # print(kwargs.get('interval'))
-        # print(kwargs)
-        # print(self.kwargs)
-        # print(args)
-        # print(self.args)
-        # print(request.method)
-        # if kwargs.get('symbol') is None and kwargs.get('interval') is None:
-        #     # raise ValidationError(
-        #     #     "Missing required parameters!"
-        #     # )
-        #     return HttpResponseBadRequest()
-        update_candles()
+        # print(request)
+        # print(request.GET)
+        # print(request.GET.get('symbol'))
+        if request.GET.get('symbol') is None or request.GET.get('interval') is None:
+            # raise ValidationError(
+            #     "Missing required parameters!"
+            # )
+            return HttpResponseBadRequest()
+        if not request.GET.get('interval') in set((item[0] for item in Candle.KLINE_INTERVAL)):
+            return HttpResponseBadRequest()
+        update_candles(symbol=request.GET.get('symbol'), interval=request.GET.get('interval'))
         response = super().dispatch(request, *args, **kwargs)
         return response
 
