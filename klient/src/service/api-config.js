@@ -6,11 +6,12 @@ const API = axios.create({
         "Content-type": "application/json",
     },
     xsrfCookieName: "csrftoken",
-    xsrfHeaderName: "X-CSRFTOKEN"/*,
-    withCredentials: true*/
+    xsrfHeaderName: "X-CSRFToken",
+    /*withCredentials: true*/
 })
 
-/*fetch('http://localhost:8000/');*/
+// fetch('http://localhost:8000/');
+// fetch('/');
 
 /*API.get('http://localhost:8000/', {withCredentials: true}).then().catch(() => {});*/
 

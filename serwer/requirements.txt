@@ -1,9 +1,9 @@
 binance~=0.3
-coinpaprika==0.1.0
+coinpaprika~=0.1.0
 Django~=3.2
 django-filter
-djangorestframework==3.12.4
-numpy==1.20.2
-pandas==1.2.4
-schedule==1.1.0
+djangorestframework~=3.12.4
+numpy~=1.21.0
+pandas~=1.2.4
+schedule~=1.1.0
 scikit-learn~=0.24.2

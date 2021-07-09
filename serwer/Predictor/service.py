@@ -52,6 +52,11 @@ class Learning:
 
         # train_windows.head(3)
 
+    def learn(self, method=PredictionType.MLRW):
+        return {
+            PredictionType.MLRW: self.learn_mlr_with_windows(),
+        }[method]
+
     def learn_mlr_with_windows(self):
         from sklearn.linear_model import LinearRegression
         lr_model = LinearRegression()

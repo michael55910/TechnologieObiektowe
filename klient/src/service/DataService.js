@@ -22,6 +22,24 @@ class DataService {
         })
     }
 
+    getIntervals() {
+        return http.get("intervals")
+    }
+
+    getPredictionMethods() {
+        return http.get("predictionmethods")
+    }
+
+    trainModel(symbol, interval, predictionMethod, windowSize, predictionSize) {
+        return http.post("learn", {
+            symbol: symbol,
+            interval: interval,
+            predictionMethod: predictionMethod,
+            windowSize: windowSize,
+            predictionSize: predictionSize
+        }, /*Object.assign({}, http.defaults, {withCredentials: true})*/ {withCredentials: true})
+    }
+
     boolParam(val) {
         return val ? 'True' : 'False'
     }

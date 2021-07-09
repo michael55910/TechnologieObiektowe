@@ -1,3 +1,5 @@
+from abc import ABC
+
 from rest_framework import serializers
 from .models import Cryptocurrency, ExchangeInfo, Rate, Candle
 
@@ -38,3 +40,8 @@ class PairsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExchangeInfo
         fields = ('symbol', 'status', 'base_asset', 'quote_asset')
+
+
+class IntervalsSerializer(serializers.BaseSerializer, ABC):
+    def to_representation(self, instance):
+        return instance[0]

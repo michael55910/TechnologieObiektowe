@@ -1,9 +1,10 @@
-from django.urls import path, re_path
+from django.urls import path
 from dataConnector import views
 
 urlpatterns = [
     path('candles', views.CandlesList.as_view()),
     path('pairs', views.PairsList.as_view()),
+    path('intervals', views.IntervalsList.as_view()),
     path('cryptocurrency/', views.CryptocurrencyList.as_view()),
     path('cryptocurrency/<int:pk>/', views.CryptocurrencyDetail.as_view()),
     path('exchangeinfo/', views.ExchangeInfoList.as_view()),

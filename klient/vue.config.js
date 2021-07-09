@@ -4,7 +4,7 @@ module.exports = {
             '/api': {
                 port: 8000,
                 target: 'http://localhost:8000/',
-                changeOrigin: true
+                /*changeOrigin: true*/
             },
         }
     }

@@ -3,8 +3,9 @@
     <apexchart height="350" type="candlestick" :options="chartOptions" :series="series"></apexchart>
 
     <b-form inline>
-      <b-input-group prepend="Para kryptowalut: " class="mb-2 mr-sm-2 mb-sm-0">
-        <b-form-select v-model="selectedPairSymbol" :options="pairs" text-field="symbol" value-field="symbol"></b-form-select>
+      <b-input-group prepend="Para kryptowalut" class="mb-2 mr-sm-2 mb-sm-0">
+        <b-form-select v-model="selectedPairSymbol" :options="pairs" text-field="symbol"
+                       value-field="symbol"></b-form-select>
       </b-input-group>
 
       <b-input-group prepend="Interwał" class="mb-2 mr-sm-2 mb-sm-0">
@@ -22,12 +23,20 @@ import DataService from "@/service/DataService";
 export default {
   name: "Rates",
   withCredentials: true,
+  props: {
+    pairs: {
+      type: Array,
+      required: true
+    },
+    intervals: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
       pageSize: 100,
-      pairs: [],
       selectedPairSymbol: 'BNBBTC',
-      intervals: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M'],
       selectedInterval: '1m',
       dataLoading: true,
       firstCheck: false,
@@ -59,7 +68,6 @@ export default {
     };
   },
   created() {
-    this.getPairs();
     this.updateChart();
   },
   methods: {
@@ -84,15 +92,7 @@ export default {
             console.log(error);
           });
     },
-    getPairs() {
-      DataService.getAllPairs('TRADING')
-          .then(response => {
-            this.pairs = response.data;
-          })
-          .catch(error => {
-            console.log(error);
-          });
-    }
+
   }
 }
 </script>

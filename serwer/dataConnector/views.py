@@ -1,22 +1,18 @@
-from django.http import HttpResponseNotFound, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.exceptions import ValidationError
+from rest_framework import generics
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Cryptocurrency, ExchangeInfo, Rate, Candle
+from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer, \
+    PairsSerializer, IntervalsSerializer
+from .submodels import update_candles
 from .submodels import update_coins
 from .submodels import update_exchanges
 from .submodels import update_rates
-from .submodels import update_candles
-from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer, \
-    PairsSerializer
-from rest_framework import generics, filters
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.parsers import JSONParser
-from rest_framework import status
-from rest_framework.decorators import api_view
 
 
 class CryptocurrencyUpdate(APIView):
@@ -137,3 +133,8 @@ class PairsList(generics.ListAPIView):
     serializer_class = PairsSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['symbol', 'status', 'base_asset__symbol', 'quote_asset__symbol']
+
+
+class IntervalsList(generics.ListAPIView):
+    queryset = Candle.KLINE_INTERVAL
+    serializer_class = IntervalsSerializer
