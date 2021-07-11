@@ -6,6 +6,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 from Predictor.models import PredictionType
 from Predictor.serializers import PredictionTypeSerializer
@@ -14,9 +15,9 @@ from dataConnector.submodels import Candle
 
 
 # @csrf_exempt
-@method_decorator(require_http_methods(["POST"]), name='dispatch')
+# @method_decorator(require_http_methods(["POST"]), name='dispatch')
 class LearnModel(APIView):
-    def dispatch(self, request, *args, **kwargs):
+    def post(self, request):
         params = JSONParser().parse(request)
         symbol = params['symbol']
         interval = params['interval']
@@ -30,9 +31,10 @@ class LearnModel(APIView):
         if method not in set(item.value for item in PredictionType):
             return HttpResponseBadRequest()
 
-        learning = Learning(pair_symbol=symbol, interval=interval, window_size=window_size, response_size=prediction_size)
+        learning = Learning(pair_symbol=symbol, interval=interval, window_size=window_size,
+                            response_size=prediction_size)
         learning.learn(method)
-        return Response()
+        return Response(status=status.HTTP_200_OK)
 
 
 class PredictionMethods(ListAPIView):

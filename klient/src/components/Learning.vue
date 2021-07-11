@@ -45,10 +45,10 @@ export default {
   data() {
     return {
       selectedPairSymbol: 'BNBBTC',
-      selectedInterval: '1m',
+      selectedInterval: '1M',
       selectedLearningMethod: 'MLRW',
-      windowSize: 60,
-      predictionSize: 60,
+      windowSize: 10,
+      predictionSize: 1,
       learningInProgress: false
     }
   },

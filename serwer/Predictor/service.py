@@ -4,6 +4,7 @@ import pandas as pd
 import time
 import pickle
 import os
+import decimal
 
 from Predictor.models import PredictionType
 from dataConnector.models import Candle
@@ -72,18 +73,20 @@ class Learning:
         lr_model.fit(self.train_windows.iloc[:, :-1], self.train_windows.iloc[:, -1])
 
         t0 = time.time()
-        lr_y = self.test_windows['y'].values
-        lr_y_fit = lr_model.predict(self.train_windows.iloc[:, :-1])
+        lr_y = self.test_windows['Y'].values
+        # lr_y_fit = lr_model.predict(self.train_windows.iloc[:, :-1])
         lr_y_pred = lr_model.predict(self.test_windows.iloc[:, :-1])
         tf = time.time()
 
-        lr_residuals = lr_y_pred - lr_y
+        lr_residuals = lr_y_pred - lr_y.astype('float64')
         lr_rmse = np.sqrt(np.sum(np.power(lr_residuals, 2)) / len(lr_residuals))
         lr_time = (tf - t0)
         print('RMSE = %.2f' % lr_rmse)
         print('Time to train = %.2f seconds' % lr_time)
 
-        pickle.dump([lr_model, lr_rmse, lr_time], open(self.file_path, 'wb'))
+        file = open(self.file_path, 'wb')
+        pickle.dump([lr_model, lr_rmse, lr_time], file)
+        file.close()
 
     def predict_using_mlr_with_windows(self):
         if not os.path.isfile(self.file_path):
@@ -179,7 +182,7 @@ class WindowSlider(object):
                 slices = np.concatenate((slices, line))
 
             # Incorporate the timestamps where we want to predict
-            line = np.array([self.re_init(dataset.values[i:i + self.window_size + self.response_size, 0])[-1]])
+            line = self.re_init(dataset.values[i:i + self.window_size + self.response_size, 0])[-self.response_size:]
             y = np.array(dataset.values[self.window_size + i + self.response_size - 1, -1]).reshape(1, )
             slices = np.concatenate((slices, line, y))
 
