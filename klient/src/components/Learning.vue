@@ -20,6 +20,8 @@
 
       <b-button variant="primary" @click="startLearning">Rozpocznij uczenie</b-button>
     </b-form>
+
+    <b-table hover :items="existingPredictionModels" class="mt-3"></b-table>
   </div>
 </template>
 
@@ -49,7 +51,8 @@ export default {
       selectedLearningMethod: 'MLRW',
       windowSize: 10,
       predictionSize: 1,
-      learningInProgress: false
+      learningInProgress: false,
+      existingPredictionModels: []
     }
   },
   methods: {
@@ -62,11 +65,24 @@ export default {
               console.log('Learning success');
             }
             this.learningInProgress = false;
+            this.getPredictionModels();
+          })
+          .catch(error => {
+            console.log(error);
+          });
+    },
+    getPredictionModels() {
+      DataService.getPredictionModels()
+          .then(response => {
+            this.existingPredictionModels = response.data;
           })
           .catch(error => {
             console.log(error);
           });
     }
+  },
+  created() {
+    this.getPredictionModels();
   }
 }
 </script>

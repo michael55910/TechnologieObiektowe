@@ -40,6 +40,15 @@ class DataService {
         }, /*Object.assign({}, http.defaults, {withCredentials: true})*/ {withCredentials: true})
     }
 
+    getPredictionModels(symbol = undefined, interval = undefined) {
+        return http.get("predictionmodels", {
+            params: {
+                symbol: symbol,
+                interval: interval,
+            }
+        })
+    }
+
     boolParam(val) {
         return val ? 'True' : 'False'
     }

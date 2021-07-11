@@ -4,4 +4,5 @@ from Predictor import views
 urlpatterns = [
     path('learn', views.LearnModel.as_view()),
     path('predictionmethods', views.PredictionMethods.as_view()),
+    path('predictionmodels', views.PredictionModels.as_view()),
 ]

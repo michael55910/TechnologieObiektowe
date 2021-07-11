@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-from Predictor.models import PredictionType
-from Predictor.serializers import PredictionTypeSerializer
+from Predictor.models import PredictionType, get_available_prediction_models
+from Predictor.serializers import PredictionTypeSerializer, PredictionModelSerializer
 from Predictor.service import Learning
 from dataConnector.submodels import Candle
 
@@ -40,3 +40,8 @@ class LearnModel(APIView):
 class PredictionMethods(ListAPIView):
     queryset = PredictionType
     serializer_class = PredictionTypeSerializer
+
+
+class PredictionModels(ListAPIView):
+    queryset = get_available_prediction_models()
+    serializer_class = PredictionModelSerializer
