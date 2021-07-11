@@ -35,8 +35,8 @@ class DataService {
             symbol: symbol,
             interval: interval,
             predictionMethod: predictionMethod,
-            windowSize: windowSize,
-            predictionSize: predictionSize
+            windowSize: windowSize * 1,
+            predictionSize: predictionSize * 1
         }, /*Object.assign({}, http.defaults, {withCredentials: true})*/ {withCredentials: true})
     }
 

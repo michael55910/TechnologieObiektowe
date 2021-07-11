@@ -13,29 +13,40 @@ from dataConnector.submodels import ExchangeInfo
 class Learning:
 
     def __init__(self, pair_symbol, interval, window_size=60, response_size=5):
-        candles = Candle.objects.filter(symbol=pair_symbol,
-                                        is_real=True,
-                                        interval=interval).order_by('open_time').defer('symbol', 'interval', 'is_real',
-                                                                                       'prediction_type')
+        candles_queryset = Candle.objects.filter(symbol=pair_symbol,
+                                                 is_real=True,
+                                                 interval=interval).order_by('open_time').defer('id', 'symbol',
+                                                                                                'interval',
+                                                                                                'is_real',
+                                                                                                'prediction_type')
         self.pair_symbol = pair_symbol
         self.interval = interval
         self.window_size = window_size
         self.response_size = response_size
-        self.file_path = self.pair_symbol + '_' + self.interval + '_mlr_with_windows_' + self.window_size.__str__() \
+        self.file_path = 'prediction_models/' + self.pair_symbol + '_' + self.interval + '_mlr_with_windows_' + self.window_size.__str__() \
                          + '-' + self.response_size.__str__() + '.pkl'
 
-        self.candles = pd.DataFrame(candles)
+        candles = np.array(
+            list(candles_queryset.values_list('open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
+                                              'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume',
+                                              'taker_buy_quote_asset_volume')))
+        self.dataset = pd.DataFrame(candles,
+                                    columns=['open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
+                                             'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume',
+                                             'taker_buy_quote_asset_volume'])
 
         delta_t = np.array(
-            [(self.candles.close_time[i] + 1 - self.candles.open_time[i]) for i in range(len(self.candles))])
-        delta_t = np.concatenate((np.array([0]), delta_t))
+            [(self.dataset.close_time[i] + 1 - self.dataset.open_time[i]) for i in range(len(self.dataset))])
+        # delta_t = np.concatenate((np.array([0]), delta_t))
+        y = np.array([(self.dataset.close[i] - self.dataset.open[i]) for i in range(len(self.dataset))])
 
-        self.candles.insert(1, '∆t', delta_t)
-        # self.candles.head(3)
+        self.dataset.insert(1, '∆t', delta_t)
+        self.dataset.drop(columns=['close_time'], inplace=True)
+        self.dataset.insert(len(list(self.dataset)), 'y', y)
 
-        candles_count = candles.count()
-        trainset = candles.iloc[:round(candles_count * 0.75)]
-        testset = candles.iloc[round(candles_count * 0.75):]
+        candles_count = self.dataset.__len__()
+        trainset = self.dataset.iloc[:round(candles_count * 0.75)]
+        testset = self.dataset.iloc[round(candles_count * 0.75):]
 
         # Create Windows
         train_constructor = WindowSlider(self.window_size, self.response_size)
@@ -49,8 +60,6 @@ class Learning:
 
         test_constructor_y_inc = WindowSlider(self.window_size, self.response_size)
         self.test_windows_y_inc = test_constructor_y_inc.collect_windows(testset.iloc[:, 1:], previous_y=True)
-
-        # train_windows.head(3)
 
     def learn(self, method=PredictionType.MLRW):
         return {
@@ -80,7 +89,7 @@ class Learning:
         if not os.path.isfile(self.file_path):
             self.learn_mlr_with_windows()
         lr_model, lr_rmse, lr_time = pickle.load(open(self.file_path, 'rb'))
-        lr_y_pred = lr_model.predict(self.candles.iloc[:, :-1])
+        lr_y_pred = lr_model.predict(self.dataset.iloc[:, :-1])
 
         candle_list = []
 
@@ -126,28 +135,22 @@ class WindowSlider(object):
         arr = np.cumsum(arr)
         return arr - arr[0]
 
-    def collect_windows(self, candles, offset=0, previous_y=False):
-        """
-            Input: X is the input matrix, each column is a variable
-            Returns: diferent mappings window-output
-        """
-        cols = len(list(candles)) - 1
-        n = len(candles)
+    def collect_windows(self, dataset, offset=0, previous_y=False):
+
+        cols = len(list(dataset)) - 1
+        n = len(dataset)
 
         self.offset = offset
-        # self.window_size = window_size
         self.max_length = n - (self.window_size + self.response_size) + 1
-        if not previous_y:
-            self.final_predictors = cols * self.window_size
-        else:
-            self.final_predictors = (cols + 1) * self.window_size
 
         # Create the names of the variables in the window
         # Check first if we need to create that for the response itself
         if previous_y:
-            x = cp.deepcopy(candles)
+            self.final_predictors = (cols + 1) * self.window_size
+            x = cp.deepcopy(dataset)
         else:
-            x = candles.drop(candles.columns[-1], axis=1)
+            self.final_predictors = cols * self.window_size
+            x = dataset.drop(dataset.columns[-1], axis=1)
 
         for j, col in enumerate(list(x)):
 
@@ -165,38 +168,21 @@ class WindowSlider(object):
         df = pd.DataFrame(np.zeros(shape=(self.max_length, (self.final_predictors + self.response_size + 1))),
                           columns=self.names)
 
-        # Populate by rows in the new dataframe
         for i in range(self.max_length):
-
             slices = np.array([])
 
             # Flatten the lags of predictors
             for p in range(x.shape[1]):
-
-                line = candles.values[i:self.window_size + i, p]
-                # Reinitialization at every window for ∆T
+                line = dataset.values[i:self.window_size + i, p]
                 if p == 0:
                     line = self.re_init(line)
-
-                # Concatenate the lines in one slice
                 slices = np.concatenate((slices, line))
 
-                # Incorporate the timestamps where we want to predict
-            line = np.array([self.re_init(candles.values[i:i + self.window_size + self.response_size, 0])[-1]])
-            y = np.array(candles.values[self.window_size + i + self.response_size - 1, -1]).reshape(1, )
+            # Incorporate the timestamps where we want to predict
+            line = np.array([self.re_init(dataset.values[i:i + self.window_size + self.response_size, 0])[-1]])
+            y = np.array(dataset.values[self.window_size + i + self.response_size - 1, -1]).reshape(1, )
             slices = np.concatenate((slices, line, y))
 
-            # Incorporate the slice to the cake (df)
             df.iloc[i, :] = slices
 
         return df
-
-# class Predictor:
-#     def __init__(self, pair_symbol, interval, window_size=60, response_size=5):
-#         candles = Candle.objects.filter(symbol=pair_symbol,
-#                                         is_real=True,
-#                                         interval=interval).order_by('open_time')
-#         self.pair_symbol = pair_symbol
-#         self.interval = interval
-#         self.window_size = window_size
-#         self.response_size = response_size
