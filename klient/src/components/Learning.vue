@@ -21,7 +21,8 @@
       <b-button variant="primary" @click="startLearning">Rozpocznij uczenie</b-button>
     </b-form>
 
-    <b-table hover :items="existingPredictionModels" class="mt-3"></b-table>
+    <h4 class="mt-3">Istniejące modele:</h4>
+    <b-table hover :items="predictionModels"></b-table>
   </div>
 </template>
 
@@ -43,6 +44,10 @@ export default {
       type: Array,
       required: true
     },
+    predictionModels: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -52,7 +57,6 @@ export default {
       windowSize: 10,
       predictionSize: 1,
       learningInProgress: false,
-      existingPredictionModels: []
     }
   },
   methods: {
@@ -66,23 +70,13 @@ export default {
             }
             this.learningInProgress = false;
             this.getPredictionModels();
+            this.$emit('prediction-models-update');
+
           })
           .catch(error => {
             console.log(error);
           });
     },
-    getPredictionModels() {
-      DataService.getPredictionModels()
-          .then(response => {
-            this.existingPredictionModels = response.data;
-          })
-          .catch(error => {
-            console.log(error);
-          });
-    }
-  },
-  created() {
-    this.getPredictionModels();
   }
 }
 </script>

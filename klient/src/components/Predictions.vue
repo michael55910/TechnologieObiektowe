@@ -5,9 +5,11 @@
 </template>
 
 <script>
+
 export default {
-  name: "Predictions"
+  name: "Predictions",
 }
+
 </script>
 
 <style scoped>

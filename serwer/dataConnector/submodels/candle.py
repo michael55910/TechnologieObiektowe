@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import Max
 
-from Predictor.models import PredictionType
 from .exchangeinfo import ExchangeInfo
 from binance.client import Client
 
@@ -10,7 +9,6 @@ BinanceClient = Client("y4IYuRu7rcBuBRxbT57hdrUE12UpvMZdzJOdqPGrdS4jTU2oi9onl4bN
 
 
 class Candle(models.Model):
-    candle_pairs = ["BNBBTC", "ETHBTC"]
     KLINE_INTERVAL = [
         (Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_1MINUTE),
         (Client.KLINE_INTERVAL_3MINUTE, Client.KLINE_INTERVAL_3MINUTE),
@@ -44,7 +42,6 @@ class Candle(models.Model):
     taker_buy_base_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=18)
     taker_buy_quote_asset_volume = models.DecimalField(blank=False, decimal_places=8, max_digits=18)
     is_real = models.BooleanField(blank=False, default=True)
-    prediction_type = models.CharField(blank=True, max_length=4, choices=PredictionType.choices)
 
     class Meta:
         unique_together = ('symbol', 'interval', 'open_time', 'close_time', 'is_real')

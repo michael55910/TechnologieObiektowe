@@ -22,7 +22,6 @@ import DataService from "@/service/DataService";
 
 export default {
   name: "Rates",
-  withCredentials: true,
   props: {
     pairs: {
       type: Array,
@@ -73,7 +72,7 @@ export default {
   methods: {
     updateChart() {
       this.dataLoading = true;
-      DataService.getCandles(this.selectedPairSymbol, this.selectedInterval, true, undefined, this.pageSize, undefined)
+      DataService.getCandles(this.selectedPairSymbol, this.selectedInterval, true, this.pageSize, undefined)
           .then(response => {
             const newData = []
             for (let i = 0; i < response.data.results.length; i++) {

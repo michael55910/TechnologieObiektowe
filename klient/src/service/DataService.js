@@ -1,13 +1,12 @@
 import http from './api-config'
 
 class DataService {
-    getCandles(symbol, interval, isReal = true, predictionType, pageSize, page) {
+    getCandles(symbol, interval, isReal = true, pageSize, page) {
         return http.get("candles", {
             params: {
                 symbol: symbol,
                 interval: interval,
                 is_real: this.boolParam(isReal),
-                prediction_type: predictionType,
                 page_size: pageSize,
                 page: page
             }
@@ -45,6 +44,18 @@ class DataService {
             params: {
                 symbol: symbol,
                 interval: interval,
+            }
+        })
+    }
+
+    getLineValues(symbol, interval, isReal = true, pageSize, page) {
+        return http.get("line", {
+            params: {
+                symbol: symbol,
+                interval: interval,
+                is_real: this.boolParam(isReal),
+                page_size: pageSize,
+                page: page
             }
         })
     }

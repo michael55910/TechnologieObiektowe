@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from .models import Cryptocurrency, ExchangeInfo, Rate, Candle
 from .serializers import CryptocurrencySerializer, ExchangeInfoSerializer, RateSerializer, CandleSerializer, \
-    PairsSerializer, IntervalsSerializer
+    PairsSerializer, IntervalsSerializer, LineValuesSerializer
 from .submodels import update_candles
 from .submodels import update_coins
 from .submodels import update_exchanges
@@ -78,7 +78,7 @@ class CandleDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CandlesPagination(PageNumberPagination):
-    page_size = 500
+    page_size = 100
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -108,18 +108,28 @@ class CandlesList(generics.ListAPIView):
     serializer_class = CandleSerializer
     pagination_class = CandlesPagination
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['symbol', 'interval', 'is_real', 'prediction_type']
-
+    filterset_fields = ['symbol', 'interval', 'is_real']
     # ordering_fields = ['-close_time']
 
     def dispatch(self, request, *args, **kwargs):
-        # print(request)
-        # print(request.GET)
-        # print(request.GET.get('symbol'))
         if request.GET.get('symbol') is None or request.GET.get('interval') is None:
-            # raise ValidationError(
-            #     "Missing required parameters!"
-            # )
+            return HttpResponseBadRequest()
+        if not request.GET.get('interval') in set((item[0] for item in Candle.KLINE_INTERVAL)):
+            return HttpResponseBadRequest()
+        update_candles(symbol=request.GET.get('symbol'), interval=request.GET.get('interval'))
+        response = super().dispatch(request, *args, **kwargs)
+        return response
+
+
+class LineValuesList(generics.ListAPIView):
+    queryset = Candle.objects.all().only('close', 'close_time').order_by('-close_time')
+    serializer_class = LineValuesSerializer
+    pagination_class = CandlesPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['symbol', 'interval', 'is_real']
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.GET.get('symbol') is None or request.GET.get('interval') is None:
             return HttpResponseBadRequest()
         if not request.GET.get('interval') in set((item[0] for item in Candle.KLINE_INTERVAL)):
             return HttpResponseBadRequest()

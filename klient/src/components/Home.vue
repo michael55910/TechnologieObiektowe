@@ -5,14 +5,15 @@
         <!--        <b-card-text>Tab contents 1</b-card-text>-->
         <Rates :pairs="pairs" :intervals="intervals"/>
       </b-tab>
-      <b-tab title="Przewidywania" >
+      <b-tab title="Przewidywania">
         <Predictions/>
       </b-tab>
-      <b-tab title="Porównanie" >
-        <Comparison/>
+      <b-tab title="Porównanie" lazy>
+        <Comparison :pairs="pairs" :intervals="intervals"/>
       </b-tab>
-      <b-tab title="Uczenie" >
-        <Learning :pairs="pairs" :intervals="intervals" :learning-methods="predictionMethods"/>
+      <b-tab title="Uczenie">
+        <Learning :pairs="pairs" :intervals="intervals" :learning-methods="predictionMethods"
+                  :predictionModels="predictionModels" v-on:prediction-models-update="getPredictionMethods"/>
       </b-tab>
     </b-tabs>
   </b-card>
@@ -33,7 +34,8 @@ export default {
       pairs: [],
       // intervals: ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M'],
       intervals: [],
-      predictionMethods: []
+      predictionMethods: [],
+      predictionModels: []
     }
   },
   methods: {
@@ -63,12 +65,23 @@ export default {
           .catch(error => {
             console.log(error);
           });
+    },
+    getPredictionModels() {
+      DataService.getPredictionModels()
+          .then(response => {
+            this.predictionModels = response.data;
+          })
+          .catch(error => {
+            console.log(error);
+          });
     }
   },
   created() {
     this.getPairs();
     this.getIntervals();
     this.getPredictionMethods();
+    this.getPredictionModels();
+
   }
 }
 </script>

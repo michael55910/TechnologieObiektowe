@@ -30,7 +30,7 @@ class CandleSerializer(serializers.ModelSerializer):
         model = Candle
         fields = ('symbol', 'interval', 'open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
                   'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume',
-                  'taker_buy_quote_asset_volume', 'is_real', 'prediction_type')
+                  'taker_buy_quote_asset_volume', 'is_real')
 
 
 class PairsSerializer(serializers.ModelSerializer):
@@ -45,3 +45,11 @@ class PairsSerializer(serializers.ModelSerializer):
 class IntervalsSerializer(serializers.BaseSerializer, ABC):
     def to_representation(self, instance):
         return instance[0]
+
+
+class LineValuesSerializer(serializers.BaseSerializer, ABC):
+    def to_representation(self, instance):
+        return {
+            'timestamp': instance.close_time,
+            'value': instance.close
+        }

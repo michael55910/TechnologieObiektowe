@@ -5,6 +5,7 @@ urlpatterns = [
     path('candles', views.CandlesList.as_view()),
     path('pairs', views.PairsList.as_view()),
     path('intervals', views.IntervalsList.as_view()),
+    path('line', views.LineValuesList.as_view()),
     path('cryptocurrency/', views.CryptocurrencyList.as_view()),
     path('cryptocurrency/<int:pk>/', views.CryptocurrencyDetail.as_view()),
     path('exchangeinfo/', views.ExchangeInfoList.as_view()),
