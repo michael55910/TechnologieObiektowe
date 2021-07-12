@@ -12,7 +12,7 @@
         <b-form-select v-model="selectedInterval" :options="intervals"></b-form-select>
       </b-input-group>
 
-      <b-button variant="primary" @click="updateLineChart">Aktualizuj</b-button>
+      <b-button variant="primary" @click="updateData">Aktualizuj</b-button>
     </b-form>
   </div>
 </template>
@@ -63,7 +63,7 @@ export default {
     };
   },
   created() {
-    this.updateLineChart();
+    this.updateData();
   },
   methods: {
     updateLineChart() {
@@ -88,6 +88,13 @@ export default {
             console.log(error);
           });
     },
+    getAvailablePredictions() {
+      
+    },
+    updateData() {
+      this.updateLineChart();
+      this.getAvailablePredictions();
+    }
   }
 }
 </script>

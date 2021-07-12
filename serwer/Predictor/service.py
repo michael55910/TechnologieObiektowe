@@ -1,14 +1,13 @@
-import numpy as np
 import copy as cp
+import os
+import pickle
+
+import numpy as np
 import pandas as pd
 import time
-import pickle
-import os
-import decimal
 
-from Predictor.models import PredictionType
+from Predictor.models import PredictionType, prediction_models_directory
 from dataConnector.models import Candle
-from dataConnector.submodels import ExchangeInfo
 
 
 class Learning:
@@ -24,8 +23,6 @@ class Learning:
         self.interval = interval
         self.window_size = window_size
         self.response_size = response_size
-        self.file_path = 'prediction_models/' + self.pair_symbol + '_' + self.interval + '_mlr_with_windows_' + self.window_size.__str__() \
-                         + '-' + self.response_size.__str__() + '.pkl'
 
         candles = np.array(
             list(candles_queryset.values_list('open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time',
@@ -84,33 +81,38 @@ class Learning:
         print('RMSE = %.2f' % lr_rmse)
         print('Time to train = %.2f seconds' % lr_time)
 
-        file = open(self.file_path, 'wb')
+        file_path = prediction_models_directory + self.pair_symbol + '_' + self.interval + '_mlr_with_windows_' + self.window_size.__str__() \
+                    + '-' + self.response_size.__str__() + '.pkl'
+        file = open(file_path, 'wb')
         pickle.dump([lr_model, lr_rmse, lr_time], file)
         file.close()
 
-    def predict_using_mlr_with_windows(self):
-        if not os.path.isfile(self.file_path):
-            self.learn_mlr_with_windows()
-        lr_model, lr_rmse, lr_time = pickle.load(open(self.file_path, 'rb'))
-        lr_y_pred = lr_model.predict(self.dataset.iloc[:, :-1])
 
-        candle_list = []
+def predict_using_mlr_with_windows(symbol, interval, prediction_model):
+    file_path = prediction_models_directory + prediction_model + '.pkl'
+    if not os.path.isfile(file_path):
+        return None
+    lr_model, lr_rmse, lr_time = pickle.load(open(file_path, 'rb'))
 
-        current_symbol_fk = ExchangeInfo.objects.get(symbol=self.pair_symbol)
-        for x in lr_y_pred:
-            new_candle = Candle(symbol=current_symbol_fk, interval=self.interval,
-                                open_time=x['open_time'],
-                                open=x['open'], high=x['high'], low=x['low'], close=x['close'], volume=x['volume'],
-                                close_time=x['close_time'],
-                                quote_asset_volume=x['quote_asset_volume'], number_of_trades=x['number_of_trades'],
-                                taker_buy_base_asset_volume=x['taker_buy_base_asset_volume'],
-                                taker_buy_quote_asset_volume=x['taker_buy_quote_asset_volume'], is_real=False,
-                                prediction_type=PredictionType.MLRW)
-            candle_list.append(new_candle)
-
-        print("Inserting data to database")
-        Candle.objects.bulk_create(candle_list, ignore_conflicts=True, batch_size=1000)
-        print("Results saved to database")
+    # lr_y_pred = lr_model.predict(self.dataset.iloc[:, :-1])
+    #
+    # candle_list = []
+    #
+    # current_symbol_fk = ExchangeInfo.objects.get(symbol=symbol)
+    # for x in lr_y_pred:
+    #     new_candle = Candle(symbol=current_symbol_fk, interval=interval,
+    #                         open_time=x['open_time'],
+    #                         open=x['open'], high=x['high'], low=x['low'], close=x['close'], volume=x['volume'],
+    #                         close_time=x['close_time'],
+    #                         quote_asset_volume=x['quote_asset_volume'], number_of_trades=x['number_of_trades'],
+    #                         taker_buy_base_asset_volume=x['taker_buy_base_asset_volume'],
+    #                         taker_buy_quote_asset_volume=x['taker_buy_quote_asset_volume'], is_real=False,
+    #                         prediction_type=PredictionType.MLRW)
+    #     candle_list.append(new_candle)
+    #
+    # print("Inserting data to database")
+    # Candle.objects.bulk_create(candle_list, ignore_conflicts=True, batch_size=1000)
+    # print("Results saved to database")
 
 
 class WindowSlider(object):

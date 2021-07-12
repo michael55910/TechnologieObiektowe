@@ -8,12 +8,12 @@
       <b-tab title="Przewidywania">
         <Predictions/>
       </b-tab>
-      <b-tab title="Porównanie" lazy>
+      <b-tab title="Porównanie">
         <Comparison :pairs="pairs" :intervals="intervals"/>
       </b-tab>
       <b-tab title="Uczenie">
         <Learning :pairs="pairs" :intervals="intervals" :learning-methods="predictionMethods"
-                  :predictionModels="predictionModels" v-on:prediction-models-update="getPredictionMethods"/>
+                  :predictionModels="predictionModels" v-on:prediction-models-update="getPredictionModels"/>
       </b-tab>
     </b-tabs>
   </b-card>
