@@ -18,6 +18,9 @@ from dataConnector.submodels import Candle, update_candles
 
 # @csrf_exempt
 # @method_decorator(require_http_methods(["POST"]), name='dispatch')
+from dataConnector.views import CandlesPagination
+
+
 class LearnModel(APIView):
     def post(self, request):
         params = JSONParser().parse(request)
@@ -68,6 +71,7 @@ class AvailablePredictionsList(ListAPIView):
 class PredictedDataList(ListAPIView):
     queryset = PredictedData.objects.all().order_by('-close_time')
     serializer_class = PredictedDataSerializer
+    pagination_class = CandlesPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['prediction']
 
@@ -88,7 +92,7 @@ class Predict(APIView):
             return HttpResponseBadRequest()
         if interval not in set(item[0] for item in Candle.KLINE_INTERVAL):
             return HttpResponseBadRequest()
-        if prediction_model not in get_available_prediction_models():
+        if prediction_model + '.pkl' not in get_available_prediction_models():
             return HttpResponseBadRequest()
         predict_using_mlr_with_windows(symbol=symbol, interval=interval, prediction_model=prediction_model)
         return Response(status=status.HTTP_200_OK)

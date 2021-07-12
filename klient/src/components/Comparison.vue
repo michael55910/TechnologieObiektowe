@@ -1,6 +1,6 @@
 <template>
   <div>
-    <apexchart :options="chartOptions" :series="series"></apexchart>
+    <apexchart v-if="firstCheck" :options="chartOptions" :series="series"></apexchart>
 
     <b-form inline>
       <b-input-group prepend="Para kryptowalut" class="mb-2 mr-sm-2 mb-sm-0">
@@ -37,7 +37,7 @@ export default {
       pageSize: 100,
       selectedPairSymbol: 'BNBBTC',
       selectedInterval: '1m',
-      dataLoading: true,
+      dataLoading: false,
       firstCheck: false,
       series: [{
         data: []
@@ -60,10 +60,11 @@ export default {
           }
         }
       },
+      availablePredictions: []
     };
   },
   created() {
-    this.updateData();
+    // this.updateData();
   },
   methods: {
     updateLineChart() {
@@ -89,7 +90,13 @@ export default {
           });
     },
     getAvailablePredictions() {
-      
+      DataService.getPredictions(this.selectedPairSymbol, this.selectedInterval)
+          .then(response => {
+            this.availablePredictions = response.data;
+          })
+          .catch(error => {
+            console.log(error);
+          });
     },
     updateData() {
       this.updateLineChart();

@@ -6,7 +6,7 @@
         <Rates :pairs="pairs" :intervals="intervals"/>
       </b-tab>
       <b-tab title="Przewidywania">
-        <Predictions/>
+        <Predictions :pairs="pairs" :intervals="intervals" :predictionModels="predictionModels"/>
       </b-tab>
       <b-tab title="Porównanie">
         <Comparison :pairs="pairs" :intervals="intervals"/>

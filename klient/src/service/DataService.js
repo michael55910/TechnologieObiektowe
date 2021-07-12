@@ -60,6 +60,31 @@ class DataService {
         })
     }
 
+    getPredictions(symbol, interval) {
+        return http.get("predictions", {
+            params: {
+                symbol: symbol,
+                interval: interval
+            }
+        })
+    }
+
+    getPredictedData(predictionId) {
+        return http.get("predicteddata", {
+            params: {
+                prediction: predictionId,
+            }
+        })
+    }
+
+    createPrediction(symbol, interval, predictionModel) {
+        return http.post("predict", {
+            symbol: symbol,
+            interval: interval,
+            predictionModel: predictionModel
+        }, /*Object.assign({}, http.defaults, {withCredentials: true})*/ {withCredentials: true})
+    }
+
     boolParam(val) {
         return val ? 'True' : 'False'
     }
